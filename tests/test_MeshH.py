@@ -8,12 +8,15 @@ def test_Mesh():
     msh = Mesh()
     poly = msh.createH( 50, 100, 5, 7, 1000 )
 
-    plotter = pv.Plotter(off_screen=False, window_size=(1000,1000))
-    plotter.camera.position = (1000.0, 1000.0, 3000.0)
-    plotter.add_mesh(poly ,color="FFFFFF", show_edges=True)
+    # objファイルを作成
+    filename = 'tests/dist/' + 'msh.obj'
+    pv.save_meshio(filename, poly)
 
-    plotter.show()
+    return filename
 
 
 if __name__ == "__main__":
-    test_Mesh()
+    filename = test_Mesh()
+
+    mesh = pv.read(filename)
+    mesh.plot(show_edges=True)
