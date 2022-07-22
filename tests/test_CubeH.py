@@ -9,16 +9,16 @@ def test_Cube():
     cube = Cube()
     poly = cube.createH( 50, 100, 5, 7, 1000 )
 
-    # objファイルを作成
-    filename = 'tests/dist/' + 'cube.obj'
-    pv.save_meshio(filename, poly)
-
-    return filename
+    return poly
 
 
 if __name__ == "__main__":
 
-    filename = test_Cube()
+    poly = test_Cube()
+
+    # objファイルを作成
+    filename = 'tests/dist/' + 'cube.obj'
+    pv.save_meshio(filename, poly)
 
     mesh = pv.read(filename)
     mesh.plot(show_edges=True)
