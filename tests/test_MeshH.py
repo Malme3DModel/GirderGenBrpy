@@ -8,15 +8,14 @@ def test_Mesh():
     msh = Mesh()
     poly = msh.createH( 50, 100, 5, 7, 1000 )
 
+    return poly
+
+if __name__ == "__main__":
+    poly = test_Mesh()
+
     # objファイルを作成
     filename = 'tests/dist/' + 'msh.obj'
     pv.save_meshio(filename, poly)
-
-    return filename
-
-
-if __name__ == "__main__":
-    filename = test_Mesh()
 
     mesh = pv.read(filename)
     mesh.plot(show_edges=True)
