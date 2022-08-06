@@ -26,6 +26,7 @@ class IfcManager():
 
 
     def CreateBeam(self ,Container, Name , section , L , position , direction):
+      Z = 0.,0.,1.
       B1 = self.ifcFile.createIfcBeam(self.create_guid(), self.owner_history , Name)
       B1.ObjectType ='beam'
       
@@ -37,7 +38,7 @@ class IfcManager():
       B1_Placement = self.ifcFile.createIfcLocalPlacement(Container.ObjectPlacement,B1_Axis2Placement)
       B1.ObjectPlacement=B1_Placement
 
-      B1_ExtrudePlacement = self.ifcFile.createIfcAxis2Placement3D(self.ifcFile.createIfcCartesianPoint ( (0.,0.,0.) )   )
+      B1_ExtrudePlacement = self.ifcFile.createIfcAxis2Placement3D(self.ifcFile.createIfcCartesianPoint(Z))
     
       B1_Extruded=self.ifcFile.createIfcExtrudedAreaSolid()
       B1_Extruded.SweptArea=section
