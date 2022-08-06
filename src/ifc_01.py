@@ -1,38 +1,73 @@
 import ifcopenshell
-from ifcopenshell import geom
+import uuid
 
 class IfcManager():
     def __init__(self):
-        pass
+        self.ifcFile = ifcopenshell.open("./data/sample.ifc")
+        self.owner_history = self.ifcFile.createIfcOwnerHistory() 
+        self.context = self.ifcFile.by_type("IfcGeometricRepresentationContext")[0]
 
 
-    def add_Wall(self):
-        # sasa コメントアウト 
-        # settings = ifcopenshell.geom.settings()
-        # settings.set(settings.USE_PYTHON_OPENCASCADE, True)
+    def create_guid(self):
+      return ifcopenshell.guid.compress(uuid.uuid1().hex)
 
-        # 既存のIFCファイルを読み込む
-        ifc_file = ifcopenshell.open("./data/sample.ifc")
+    def I_Section(self, W , D , tw , tf, r):
+        B1_Axis2Placement2D = self.ifcFile.createIfcAxis2Placement2D( 
+                              self.ifcFile.createIfcCartesianPoint( (0.,0.) ) )
+        
+        B1_AreaProfile = self.ifcFile.createIfcIShapeProfileDef('AREA')
+        B1_AreaProfile.Position = B1_Axis2Placement2D 
+        B1_AreaProfile.OverallWidth = W
+        B1_AreaProfile.OverallDepth = D
+        B1_AreaProfile.WebThickness = tw
+        B1_AreaProfile.FlangeThickness = tf
+        B1_AreaProfile.FilletRadius = r
+        return B1_AreaProfile
 
-        # 新規作成する壁のテンプレートを読み込む
-        sample_wall = ifc_file.createIfcWall()
 
-        # 座標を設定する
-        context = ifc_file.by_type("IfcGeometricRepresentationContext")[0]
-        point1 = ifc_file.createIfcCartesianPoint((0.0, 0.0, 0.0))
-        point2 = ifc_file.createIfcCartesianPoint((5.0, 0.0, 0.0))
-        ifcpts = []
-        ifcpts.append(point1)
-        ifcpts.append(point2)
-        polyline = ifc_file.createIfcPolyLine(ifcpts)
+    def CreateBeam(self ,Container, Name , section , L , position , direction):
+      B1 = self.ifcFile.createIfcBeam(self.create_guid(), self.owner_history , Name)
+      B1.ObjectType ='beam'
+      
+      B1_Point =self.ifcFile.createIfcCartesianPoint ( position ) 
+      B1_Axis2Placement = self.ifcFile.createIfcAxis2Placement3D(B1_Point)
+      B1_Axis2Placement.Axis = self.ifcFile.createIfcDirection(direction)
+      B1_Axis2Placement.RefDirection = self.ifcFile.createIfcDirection(direction) 
 
-        # 形状を設定する
-        axis_representation = ifc_file.createIfcShapeRepresentation(context, "Axis", "Curve2D", [polyline])
-        product_shape = ifc_file.createIfcProductDefinitionShape(None, None, [axis_representation])
+      B1_Placement = self.ifcFile.createIfcLocalPlacement(Container.ObjectPlacement,B1_Axis2Placement)
+      B1.ObjectPlacement=B1_Placement
 
-        # 新規壁を追加する
-        sample_wall.Representation = product_shape
-        ifc_file.add(sample_wall.Representation)
+      B1_ExtrudePlacement = self.ifcFile.createIfcAxis2Placement3D(self.ifcFile.createIfcCartesianPoint ( (0.,0.,0.) )   )
+    
+      B1_Extruded=self.ifcFile.createIfcExtrudedAreaSolid()
+      B1_Extruded.SweptArea=section
+      B1_Extruded.Position=B1_ExtrudePlacement
+      B1_Extruded.ExtrudedDirection = self.ifcFile.createIfcDirection(Z)
+      B1_Extruded.Depth = L
+      
+      B1_Repr=self.ifcFile.createIfcShapeRepresentation()
+      B1_Repr.ContextOfItems = self.context
+      B1_Repr.RepresentationIdentifier = 'Body'
+      B1_Repr.RepresentationType = 'SweptSolid'
+      B1_Repr.Items = [B1_Extruded]
+      
+      B1_DefShape=self.ifcFile.createIfcProductDefinitionShape()
+      B1_DefShape.Representations=[B1_Repr]
+      B1.Representation=B1_DefShape
+      
+      Flr1_Container = self.ifcFile.createIfcRelContainedInSpatialStructure(self.create_guid(),self.owner_history)
+      Flr1_Container.RelatedElements=[B1]
+      Flr1_Container.RelatingStructure= Container
 
-        # 別ファイルとして書き出す
-        ifc_file.write("./data/sample_new.ifc")
+
+    def add_Beam(self):
+      section1 = self.I_Section(W=0.2 ,D=0.3 , tw=0.012 , tf=0.012  , r = 2*0.012)
+      Floor1 = self.ifcFile.by_type("IfcBuildingStorey")[0]
+
+      self.CreateBeam(Floor1, Name='Beam-Floor1-B1' ,section= section1 ,
+                      L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+
+      # 別ファイルとして書き出す
+      self.ifcFile.write("./data/sample_new.ifc")
+
+        

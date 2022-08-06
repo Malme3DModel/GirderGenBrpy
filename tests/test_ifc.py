@@ -6,7 +6,7 @@ from src.ifc_01 import IfcManager
 
 def test_ifcopenshell():
     ifc = IfcManager()
-    ifc.add_Wall()
+    ifc.add_Beam()
 
 
 
