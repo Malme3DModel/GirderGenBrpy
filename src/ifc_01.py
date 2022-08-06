@@ -60,7 +60,7 @@ class IfcManager():
       Flr1_Container.RelatingStructure= Container
 
 
-    def add_Wall(self):
+    def add_Beam(self):
       section1 = self.I_Section(W=0.2 ,D=0.3 , tw=0.012 , tf=0.012  , r = 2*0.012)
       Floor1 = self.ifcFile.by_type("IfcBuildingStorey")[0]
 
