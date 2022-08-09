@@ -25,6 +25,16 @@ class IfcManager():
         return B1_AreaProfile
 
 
+    def Rect_Section(self, b, h):
+      B1_Axis2Placement2D =self.ifcFile.createIfcAxis2Placement2D( 
+                            self.ifcFile.createIfcCartesianPoint( (0.,0.) ) )
+      
+      B1_AreaProfile = self.ifcFile.createIfcRectangleProfileDef('AREA')
+      B1_AreaProfile.Position = B1_Axis2Placement2D 
+      B1_AreaProfile.XDim = b
+      B1_AreaProfile.YDim = h
+      return B1_AreaProfile
+
     def CreateBeam(self ,Container, Name , section , L , position , direction):
       Z = 0.,0.,1.
       B1 = self.ifcFile.createIfcBeam(self.create_guid(), self.owner_history , Name)
@@ -61,12 +71,13 @@ class IfcManager():
       Flr1_Container.RelatingStructure= Container
 
 
-    def add_Beam(self):
-      section1 = self.I_Section(W=0.2 ,D=0.3 , tw=0.012 , tf=0.012  , r = 2*0.012)
+    def add_Beam(self, W ,D ,tw ,tf, r,
+                    L ,position, direction):
+      section1 = self.I_Section(W, D, tw, tf, r)
       Floor1 = self.ifcFile.by_type("IfcBuildingStorey")[0]
 
       self.CreateBeam(Floor1, Name='Beam-Floor1-B1' ,section= section1 ,
-                      L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+                      L=L ,position=position, direction=direction)
 
       # 別ファイルとして書き出す
       self.ifcFile.write("./data/sample_new.ifc")
