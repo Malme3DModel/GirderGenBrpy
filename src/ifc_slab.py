@@ -62,7 +62,7 @@ class IfcManager():
 
         product_shape = self.ifcFile.createIfcProductDefinitionShape(None, None, [axis_representation, body_representation])
 
-        wall = self.ifcFile.createIfcWallStandardCase(self.create_guid(), self.owner_history, "Wall", "An awesome wall", None, wall_placement, product_shape, None)
+        slab = self.ifcFile.createIfcSlab(self.create_guid(), self.owner_history, "Slab", "An awesome slab", None, wall_placement, product_shape, None)
 
         # 別ファイルとして書き出す
         self.ifcFile.write("./data/sample_new.ifc")
