@@ -1,43 +1,23 @@
 import ifcopenshell
-import uuid
+import ifcopenshell.template
+from src.comon.comon import *
+from src.comon.object import *
 
-class IfcManager():
+class H_IfcManager():
+
     def __init__(self):
-        self.ifcFile = ifcopenshell.open("./data/sample.ifc")
+
+        self.ifcFile = ifcopenshell.template.create(schema_identifier='IFC4')
+        #self.ifcFile = ifcopenshell.file(schema='IFC4')
+        #履歴
         self.owner_history = self.ifcFile.createIfcOwnerHistory() 
+        # 環境
         self.context = self.ifcFile.by_type("IfcGeometricRepresentationContext")[0]
 
 
-    def create_guid(self):
-      return ifcopenshell.guid.compress(uuid.uuid1().hex)
-
-    def I_Section(self, W , D , tw , tf, r):
-        B1_Axis2Placement2D = self.ifcFile.createIfcAxis2Placement2D( 
-                              self.ifcFile.createIfcCartesianPoint( (0.,0.) ) )
-        
-        B1_AreaProfile = self.ifcFile.createIfcIShapeProfileDef('AREA')
-        B1_AreaProfile.Position = B1_Axis2Placement2D 
-        B1_AreaProfile.OverallWidth = W
-        B1_AreaProfile.OverallDepth = D
-        B1_AreaProfile.WebThickness = tw
-        B1_AreaProfile.FlangeThickness = tf
-        B1_AreaProfile.FilletRadius = r
-        return B1_AreaProfile
-
-
-    def Rect_Section(self, b, h):
-      B1_Axis2Placement2D =self.ifcFile.createIfcAxis2Placement2D( 
-                            self.ifcFile.createIfcCartesianPoint( (0.,0.) ) )
-      
-      B1_AreaProfile = self.ifcFile.createIfcRectangleProfileDef('AREA')
-      B1_AreaProfile.Position = B1_Axis2Placement2D 
-      B1_AreaProfile.XDim = b
-      B1_AreaProfile.YDim = h
-      return B1_AreaProfile
-
     def CreateBeam(self ,Container, Name , section , L , position , direction):
       Z = 0.,0.,1.
-      B1 = self.ifcFile.createIfcBeam(self.create_guid(), self.owner_history , Name)
+      B1 = self.ifcFile.createIfcBeam(create_guid(), self.owner_history , Name)
       B1.ObjectType ='beam'
       
       B1_Point =self.ifcFile.createIfcCartesianPoint ( position ) 
@@ -66,15 +46,22 @@ class IfcManager():
       B1_DefShape.Representations=[B1_Repr]
       B1.Representation=B1_DefShape
       
-      Flr1_Container = self.ifcFile.createIfcRelContainedInSpatialStructure(self.create_guid(),self.owner_history)
+      Flr1_Container = self.ifcFile.createIfcRelContainedInSpatialStructure(create_guid(),self.owner_history)
       Flr1_Container.RelatedElements=[B1]
       Flr1_Container.RelatingStructure= Container
 
 
     def add_Beam(self, W ,D ,tw ,tf, r,
                     L ,position, direction):
-      section1 = self.I_Section(W, D, tw, tf, r)
-      Floor1 = self.ifcFile.by_type("IfcBuildingStorey")[0]
+
+      self.ifcFile.write("./data/sample_new.ifc")
+      return
+
+      section1 = I_Section(self.ifcFile, W, D, tw, tf, r)
+
+      # 階を生成
+      storey_placement = create_ifclocalplacement(self.ifcFile)
+      Floor1 = self.ifcFile.createIfcBuildingStorey(create_guid(), self.owner_history, 'Floor1', None, None, storey_placement, None, None, "ELEMENT", 0.0)
 
       self.CreateBeam(Floor1, Name='Beam-Floor1-B1' ,section= section1 ,
                       L=L ,position=position, direction=direction)

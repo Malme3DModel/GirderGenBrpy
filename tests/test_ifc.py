@@ -1,7 +1,7 @@
 # H鋼の生成テスト
-from src.ifc_H import IfcManager
+from src.ifc_H import H_IfcManager
 def test_ifc_H():
-    ifc = IfcManager()
+    ifc = H_IfcManager()
     ifc.add_Beam(W=0.2 ,D=0.3 , tw=0.012 , tf=0.012  , r = 2*0.012,
                     L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
 
@@ -15,5 +15,5 @@ def test_ifc_slab():
 
 if __name__ == "__main__":
 
-    test_ifc_slab()
+    test_ifc_H()
 
