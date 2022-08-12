@@ -54,9 +54,6 @@ class H_IfcManager():
     def add_Beam(self, W ,D ,tw ,tf, r,
                     L ,position, direction):
 
-      self.ifcFile.write("./data/sample_new.ifc")
-      return
-
       section1 = I_Section(self.ifcFile, W, D, tw, tf, r)
 
       # 階を生成
