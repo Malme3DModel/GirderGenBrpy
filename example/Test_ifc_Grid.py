@@ -239,5 +239,7 @@ container_SpatialStructure.RelatingStructure = floor1
 container_SpatialStructure.RelatedElements = [myGrid]
 
 #=============================================
-filePath = os.path.dirname(os.path.abspath(__file__))
-ifc_file.write(filePath+ os.sep+filename)
+ifc_file.write("./data/sample_new.ifc")
+
+# filePath = os.path.dirname(os.path.abspath(__file__))
+# ifc_file.write(filePath+ os.sep+filename)

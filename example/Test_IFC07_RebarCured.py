@@ -453,7 +453,7 @@ bar_ShapeRepr.RepresentationType = 'AdvancedSweptSolid'
 bar_ShapeRepr.Items = [bar_solid]
 
 bar_DefShape = ifc_file.createIfcProductDefinitionShape()
-bar_DefShape.Representations = [bar_ShapeRepr]  # 
+bar_DefShape.Representations = [bar_ShapeRepr]  #
 
 
 bar_placement = ifc_file.createIfcLocalPlacement()
@@ -480,5 +480,6 @@ Rel.RelatedElements = [bar1 , bar2 , bar3 , bar4]
 Rel.RelatingStructure = floor1
 
 #=============================================
-filePath = os.path.dirname(os.path.abspath(__file__))
-ifc_file.write(filePath+ os.sep+filename)
+ifc_file.write("./data/sample_new.ifc")
+
+
