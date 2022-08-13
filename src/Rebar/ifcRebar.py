@@ -20,7 +20,7 @@ class ifcRebar():
         B1_Placement = self.ifc.file.createIfcLocalPlacement(
             Container.ObjectPlacement, B1_Axis2Placement)
 
-        # 鉄筋
+        # 鉄筋 start
         dia = 16
         pnt1 = self.ifc.file.createIfcCartesianPoint( (0.0,0.0,1000.0) )
         pnt2 = self.ifc.file.createIfcCartesianPoint( (0.0,0.0,0.0) )
@@ -52,7 +52,7 @@ class ifcRebar():
         B1_Extruded.InnerRadius=None
         B1_Extruded.StartParam = 0.0	# : 	IfcParameterValue;
         B1_Extruded.EndParam = 1.0	 #: 	IfcParameterValue;
-        #
+        # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
         B1_Repr.ContextOfItems = self.ifc.context
@@ -63,7 +63,7 @@ class ifcRebar():
         B1_DefShape = self.ifc.file.createIfcProductDefinitionShape()
         B1_DefShape.Representations = [B1_Repr]
 
-        # 鉄筋
+        # 鉄筋情報 start
         B1 = self.ifc.file.createIfcReinforcingBar(
             create_guid() , self.ifc.owner_hist)
         B1.ObjectType = 'rebar'
@@ -74,11 +74,10 @@ class ifcRebar():
         B1.NominalDiameter = dia
         B1.CrossSectionArea = 198.6
         B1.BarLength = 1000.0
-        #bar3.BarRole = 'MAIN'
         B1.BarSurface = 'PLAIN'  #  'TEXTURED'
         B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
-        #
+        # end
 
         Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(
             create_guid(), self.ifc.owner_hist)
