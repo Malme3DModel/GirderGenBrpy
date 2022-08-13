@@ -23,13 +23,13 @@ class ifcHsteel():
         B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
             self.ifc.file.createIfcCartesianPoint(Z))
 
-        # H鋼
+        # H鋼 start
         B1_Extruded = self.ifc.file.createIfcExtrudedAreaSolid()
         B1_Extruded.SweptArea = section
         B1_Extruded.Position = B1_ExtrudePlacement
         B1_Extruded.ExtrudedDirection = self.ifc.file.createIfcDirection(Z)
         B1_Extruded.Depth = L
-        #
+        # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
         B1_Repr.ContextOfItems = self.ifc.context
@@ -40,13 +40,13 @@ class ifcHsteel():
         B1_DefShape = self.ifc.file.createIfcProductDefinitionShape()
         B1_DefShape.Representations = [B1_Repr]
 
-        # H鋼
+        # H鋼 start
         B1 = self.ifc.file.createIfcBeam(
             create_guid(), self.ifc.owner_hist, Name)
         B1.ObjectType = 'beam'
         B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
-        #
+        # end
 
         Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(
             create_guid(), self.ifc.owner_hist)
