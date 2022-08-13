@@ -26,13 +26,13 @@ def test_Slab():
 # 鉄筋の生成テスト
 def test_Rebar():
     girder = Girder()
-    girder.add_Rebar(b=3 ,h=0.3,
-                    L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+    girder.add_Rebar(position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+
     return girder.ifc.file
 
 if __name__ == "__main__":
 
     # ifcFile = test_Hsteel()
-    ifcFile = test_Slab()
+    ifcFile = test_Rebar()
     ifcFile.write("./data/sample_new.ifc")
 

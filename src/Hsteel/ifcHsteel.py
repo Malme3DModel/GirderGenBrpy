@@ -10,9 +10,6 @@ class ifcHsteel():
         self.ifc = ifcProject
 
     def CreateBeam(self, Container, Name, section, L, position, direction):
-        B1 = self.ifc.file.createIfcBeam(
-            create_guid(), self.ifc.owner_hist, Name)
-        B1.ObjectType = 'beam'
 
         B1_Point = self.ifc.file.createIfcCartesianPoint(position)
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
@@ -22,7 +19,6 @@ class ifcHsteel():
 
         B1_Placement = self.ifc.file.createIfcLocalPlacement(
             Container.ObjectPlacement, B1_Axis2Placement)
-        B1.ObjectPlacement = B1_Placement
 
         B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
             self.ifc.file.createIfcCartesianPoint(Z))
@@ -43,7 +39,14 @@ class ifcHsteel():
 
         B1_DefShape = self.ifc.file.createIfcProductDefinitionShape()
         B1_DefShape.Representations = [B1_Repr]
+
+        # H鋼
+        B1 = self.ifc.file.createIfcBeam(
+            create_guid(), self.ifc.owner_hist, Name)
+        B1.ObjectType = 'beam'
+        B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
+        #
 
         Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(
             create_guid(), self.ifc.owner_hist)
