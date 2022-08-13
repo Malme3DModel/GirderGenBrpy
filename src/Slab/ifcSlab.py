@@ -11,9 +11,7 @@ class ifcSlab():
 
     def CreateSlab(self, Container, Name, point_list_extrusion_area, position, direction):
 
-        B1 = self.ifc.file.createIfcSlab(
-            create_guid(), self.ifc.owner_hist, Name)
-        B1.ObjectType = 'slab'
+
 
         B1_Point = self.ifc.file.createIfcCartesianPoint(position)
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
@@ -23,16 +21,15 @@ class ifcSlab():
 
         B1_Placement = self.ifc.file.createIfcLocalPlacement(
             Container.ObjectPlacement, B1_Axis2Placement)
-        B1.ObjectPlacement = B1_Placement
 
         B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
             self.ifc.file.createIfcCartesianPoint(Z))
 
-        # スラブ
+        # スラブ start
         B1_Extruded = create_ifcextrudedareasolid(self.ifc.file,
                 point_list_extrusion_area,
                 B1_ExtrudePlacement, (0.0, 0.0, 1.0), 3.0)
-        #
+        # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
         B1_Repr.ContextOfItems = self.ifc.context
@@ -42,7 +39,14 @@ class ifcSlab():
 
         B1_DefShape = self.ifc.file.createIfcProductDefinitionShape()
         B1_DefShape.Representations = [B1_Repr]
+
+        # スラブ start
+        B1 = self.ifc.file.createIfcSlab(
+            create_guid(), self.ifc.owner_hist, Name)
+        B1.ObjectType = 'slab'
+        B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
+        # end
 
         Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(
             create_guid(), self.ifc.owner_hist)
