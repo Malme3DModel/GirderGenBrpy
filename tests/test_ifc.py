@@ -1,19 +1,38 @@
+from src.Girder import Girder
+
 # H鋼の生成テスト
-from src.Hsection.ifc_H import H_IfcManager
-def test_ifc_H():
-    ifc = H_IfcManager()
-    ifc.add_Beam(W=0.2 ,D=0.3 , tw=0.012 , tf=0.012  , r = 2*0.012,
-                    L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+def test_Hsteel():
+    girder = Girder()
+    girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
+                    L=4.00, position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0))
+    return girder.ifc.file
+
 
 # スラブの生成テスト
-from src.slab.ifc_slab import IfcManager
-def test_ifc_slab():
-    ifc = IfcManager()
-    ifc.add_Slab(b=3 ,h=0.3,
-                    L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+def test_Slab():
+    girder = Girder()
+    point_list_extrusion_area = [
+            (0.0, -0.2, 0.0),
+            (5.0, -0.2, 0.0),
+            (5.0,  0.2, 0.0),
+            (0.0,  0.2, 0.0),
+            (0.0, -0.2, 0.0)
+            ]
+    girder.add_Slab(point_list_extrusion_area=point_list_extrusion_area,
+                    position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+    return girder.ifc.file
 
+
+# 鉄筋の生成テスト
+def test_Rebar():
+    girder = Girder()
+    girder.add_Rebar(b=3 ,h=0.3,
+                    L=4.00 ,position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+    return girder.ifc.file
 
 if __name__ == "__main__":
 
-    test_ifc_H()
+    # ifcFile = test_Hsteel()
+    ifcFile = test_Slab()
+    ifcFile.write("./data/sample_new.ifc")
 

@@ -6,8 +6,6 @@ import uuid
 import tempfile
 import ifcopenshell
 
-from FreeCAD import Vector
-
 create_guid = lambda: ifcopenshell.guid.compress(uuid.uuid1().hex)
 
 def CreateBeam(ifcFile ,Container, Name , section , L , position , direction):
@@ -18,7 +16,7 @@ def CreateBeam(ifcFile ,Container, Name , section , L , position , direction):
     B1_Point =ifcFile.createIfcCartesianPoint ( position ) 
     B1_Axis2Placement = ifcFile.createIfcAxis2Placement3D(B1_Point)
     B1_Axis2Placement.Axis = ifcFile.createIfcDirection(direction)
-    B1_Axis2Placement.RefDirection =ifcFile.createIfcDirection(Vector(direction).cross(Vector(Z)))
+    B1_Axis2Placement.RefDirection =ifcFile.createIfcDirection(Z)
 
     B1_Placement = ifcFile.createIfcLocalPlacement(Container.ObjectPlacement,B1_Axis2Placement)
     B1.ObjectPlacement=B1_Placement
@@ -140,8 +138,9 @@ ENDSEC;
 END-ISO-10303-21;
 """
 
-temp_handle, temp_filename = tempfile.mkstemp(suffix=".ifc")
-with open(temp_filename, "wb") as f:
+temp_filename = "./data/sample.ifc"
+# temp_handle, temp_filename = tempfile.mkstemp(suffix=".ifc")
+with open(temp_filename, "w") as f:
     f.write(template)
 
 ifcfile = ifcopenshell.open(temp_filename)
@@ -169,9 +168,7 @@ CreateBeam(ifcfile ,Floor1, Name='Beam-Floor1-B1' ,section= section3 ,
 CreateBeam(ifcfile ,Floor1, Name='Beam-Floor1-B1' ,section= section4 ,
              L=4.00 ,position=(0.0,1.5,0.0) , direction=(1.0,0.0,0.0))
 
-myPath = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'OutPut'
-ifcfile.write(myPath + os.sep+'Test04.ifc')
+ifcfile.write("./data/sample_new.ifc")
 
-
-Msg('Done!\n\n')
-Result: ifc file
+# myPath = os.path.dirname(os.path.abspath(__file__)) + os.sep + 'OutPut'
+# ifcfile.write(myPath + os.sep+'Test04.ifc')
