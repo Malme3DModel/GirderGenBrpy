@@ -5,6 +5,14 @@ def test_Hsteel():
     girder = Girder()
     girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
                     L=4.00, position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0))
+
+    girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
+                    L=4.00, position=(0.0,0.5,0.0), direction=(1.0,0.0,0.0))
+
+    girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
+                    L=4.00, position=(0.0,1.0,0.0), direction=(1.0,0.0,0.0))
+
+
     return girder.ifc.file
 
 
@@ -33,7 +41,7 @@ def test_Rebar():
 
 if __name__ == "__main__":
 
-    # ifcFile = test_Hsteel()
-    ifcFile = test_Rebar()
+    ifcFile = test_Hsteel()
+    #ifcFile = test_Slab()
     ifcFile.write("./data/sample_new.ifc")
 
