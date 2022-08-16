@@ -12,9 +12,9 @@ class Girder():
     def __init__(self):
         # ifcファイルを生成
         self.ifc = ifcProject()
-        # 階を生成
+        # 階を取得
         self.Floor1 = self.ifc.file.by_type("IfcBuildingStorey")[0]
-
+        # 3Dオブジェクトを生成するクラスを作成
         self.Hsteel = ifcHsteel(self.ifc)
         self.Slab = ifcSlab(self.ifc)
         self.Rebar = ifcRebar(self.ifc)

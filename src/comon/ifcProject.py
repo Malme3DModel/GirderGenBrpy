@@ -118,7 +118,7 @@ class ifcProject:
         floor1_placement.RelativePlacement = WorldCoordinateSystem
 
         floor1 = self.file.createIfcBuildingStorey( create_guid(), self.owner_hist )
-        floor1.Name = "Floor 1"
+        floor1.Name = "Floor1"
         floor1.ObjectPlacement = floor1_placement
         floor1.CompositionType="ELEMENT"
 
