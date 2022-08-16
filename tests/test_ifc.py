@@ -20,11 +20,10 @@ def test_Hsteel():
 def test_Slab():
     girder = Girder()
     point_list_extrusion_area = [
-            (0.0, -0.2, 0.0),
-            (5.0, -0.2, 0.0),
-            (5.0,  0.2, 0.0),
-            (0.0,  0.2, 0.0),
-            (0.0, -0.2, 0.0)
+            (0.0, 0.0, 0.0),
+            (0.0, 1.0, 0.0),
+            (5.0, 1.0, 0.0),
+            (5.0, 0.0, 0.0)
             ]
     girder.add_Slab(point_list_extrusion_area=point_list_extrusion_area,
                     position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
@@ -41,7 +40,7 @@ def test_Rebar():
 
 if __name__ == "__main__":
 
-    ifcFile = test_Hsteel()
-    #ifcFile = test_Slab()
-    ifcFile.write("./data/sample_new.ifc")
+    #ifcFile = test_Hsteel()
+    ifcFile = test_Slab()
+    ifcFile.write("./data/sample_new55.ifc")
 
