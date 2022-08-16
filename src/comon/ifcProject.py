@@ -18,7 +18,7 @@ class ifcProject:
 
 
         # open for Blank
-        self.file = ifcopenshell.file()
+        self.file = ifcopenshell.file(schema="IFC2X3")
 
         #=============================================
 

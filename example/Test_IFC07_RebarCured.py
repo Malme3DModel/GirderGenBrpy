@@ -480,6 +480,6 @@ Rel.RelatedElements = [bar1 , bar2 , bar3 , bar4]
 Rel.RelatingStructure = floor1
 
 #=============================================
-ifc_file.write("./data/sample_new.ifc")
+ifc_file.write("./data/sample_new5.ifc")
 
 

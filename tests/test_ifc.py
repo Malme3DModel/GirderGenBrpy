@@ -4,7 +4,7 @@ from src.Girder import Girder
 def test_Hsteel():
     girder = Girder()
     girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
-                    L=4.00, position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0))
+                    L=4.00, position=(0.0,2.0,0.0), direction=(1.0,0.0,0.0))
 
     girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
                     L=4.00, position=(0.0,0.5,0.0), direction=(1.0,0.0,0.0))
