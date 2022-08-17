@@ -11,8 +11,8 @@ class ifcProject:
         filename = 'output_rebar3.ifc'
         timestamp = time.time()
         timestring = time.strftime("%Y-%m-%dT%H:%M:%S", time.gmtime(timestamp))
-        creator = "Chakkree Tiyawongsuwan"
-        organization = "Southeast Asia University"
+        creator = "hirano"
+        organization = "malme"
         application, application_version = "IfcOpenShell", "0.5"
         project_globalid, project_name = create_guid(), "TestGrid"
 
@@ -31,7 +31,7 @@ class ifcProject:
         app.ApplicationFullName = "FreeCAD"
 
         person = self.file.createIfcPerson()
-        person.FamilyName="Chakkree Tiyawongsuwan"
+        person.FamilyName="Hirano"
 
 
         person_org= self.file.createIfcPersonAndOrganization()
@@ -41,7 +41,7 @@ class ifcProject:
         self.owner_hist= self.file.createIfcOwnerHistory()
         self.owner_hist.OwningUser = person_org
         self.owner_hist.OwningApplication = app
-        self.owner_hist.ChangeAction= "NOCHANGE"
+        self.owner_hist.ChangeAction= "ADDED"
         self.owner_hist.CreationDate= int(time.time())
 
         LengthUnit = self.file.createIfcSIUnit()
@@ -51,13 +51,33 @@ class ifcProject:
 
         AreaUnit = self.file.createIfcSIUnit()
         AreaUnit.UnitType = "AREAUNIT"
+        AreaUnit.Prefix = "MILLI"
         AreaUnit.Name="SQUARE_METRE"
-
 
         VolumeUnit = self.file.createIfcSIUnit()
         VolumeUnit.UnitType = "VOLUMEUNIT"
+        VolumeUnit.Prefix = "MILLI"
         VolumeUnit.Name="CUBIC_METRE"
 
+        SolidAngleUnit = self.file.createIfcSIUnit()
+        SolidAngleUnit.UnitType = "SOLIDANGLEUNIT"
+        SolidAngleUnit.Name="STERADIAN"
+
+        MassUnit = self.file.createIfcSIUnit()
+        MassUnit.UnitType = "MASSUNIT"
+        MassUnit.Name="GRAM"
+
+        TimeUnit = self.file.createIfcSIUnit()
+        TimeUnit.UnitType = "TIMEUNIT"
+        TimeUnit.Name="SECOND"
+
+        ThermodynamicTemperatureUnit = self.file.createIfcSIUnit()
+        ThermodynamicTemperatureUnit.UnitType = "THERMODYNAMICTEMPERATUREUNIT"
+        ThermodynamicTemperatureUnit.Name="DEGREE_CELSIUS"
+
+        LuminousIntensityUnit = self.file.createIfcSIUnit()
+        LuminousIntensityUnit.UnitType = "LUMINOUSINTENSITYUNIT"
+        LuminousIntensityUnit.Name="LUMEN"
 
         PlaneAngleUnit = self.file.createIfcSIUnit()
         PlaneAngleUnit.UnitType = "PLANEANGLEUNIT"
@@ -78,7 +98,8 @@ class ifcProject:
         ConvertBaseUnit.ConversionFactor = AngleUnit
 
 
-        UnitAssignment=self.file.createIfcUnitAssignment([LengthUnit , AreaUnit , VolumeUnit ,ConvertBaseUnit])
+        UnitAssignment=self.file.createIfcUnitAssignment([LengthUnit , AreaUnit , VolumeUnit ,ConvertBaseUnit, SolidAngleUnit, MassUnit, 
+                                                          TimeUnit, ThermodynamicTemperatureUnit, LuminousIntensityUnit, PlaneAngleUnit])
 
         # Defining project and representation contexts
         WorldCoordinateSystem = create_ifcaxis2placement(self.file)
