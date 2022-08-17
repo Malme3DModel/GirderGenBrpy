@@ -12,27 +12,23 @@ class Girder():
     def __init__(self):
         # ifcファイルを生成
         self.ifc = ifcProject()
-        # 階を取得
-        self.Floor1 = self.ifc.file.by_type("IfcBuildingStorey")[0]
-        # 3Dオブジェクトを生成するクラスを作成
-        self.Hsteel = ifcHsteel(self.ifc)
-        self.Slab = ifcSlab(self.ifc)
-        self.Rebar = ifcRebar(self.ifc)
+        # 階を生成
+        self.Floor1 = self.ifc.create_place("Floor 1")
 
 
     # H鋼の生成
-    def add_Beam(self, W, D, tw, tf, r,
-                    L, position, direction):
-        self.Hsteel.add_Beam(W, D, tw, tf, r,
-                    L, position, direction, self.Floor1)
+    def add_Beam(self, L, D, W, tf, tw, amount, interval, T):
+        Hsteel = ifcHsteel(self.ifc)
+        Hsteel.add_Beam(L, D, W, tf, tw, amount, interval, T, self.Floor1)
 
 
     # スラブの生成
-    def add_Slab(self, point_list_extrusion_area, position, direction):
-        self.Slab.add_Slab(point_list_extrusion_area,
-                    position, direction, self.Floor1)
+    def add_Slab(self, L, B, b, H, T, i):
+        Slab = ifcSlab(self.ifc)
+        Slab.add_Slab(L, B, b, H, T, i, self.Floor1)
 
 
     # 鉄筋の生成
     def add_Rebar(self, position, direction):
-        self.Rebar.add_Rebar(position, direction, self.Floor1)
+        Rebar = ifcRebar(self.ifc)
+        Rebar.add_Rebar(position, direction, self.Floor1)

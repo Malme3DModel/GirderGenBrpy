@@ -9,7 +9,9 @@ class ifcSlab():
         self.ifc = ifcProject
 
 
-    def CreateSlab(self, Container, Name, point_list_extrusion_area, position, direction):
+    def CreateSlab(self, Container, Name, point_list_extrusion_area, position, direction, length):
+
+
 
         B1_Point = self.ifc.file.createIfcCartesianPoint(position)
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
@@ -20,31 +22,13 @@ class ifcSlab():
         B1_Placement = self.ifc.file.createIfcLocalPlacement(
             Container.ObjectPlacement, B1_Axis2Placement)
 
-        # B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
-        #     self.ifc.file.createIfcCartesianPoint(Z))
+        B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
+            self.ifc.file.createIfcCartesianPoint(Z))
 
         # スラブ start
-        # B1_Extruded = create_ifcextrudedareasolid(self.ifc.file,
-        #         point_list_extrusion_area,
-        #         B1_ExtrudePlacement, (0.0, 0.0, 1.0), 3.0)
-
-        IFC_vertices = []
-        for pos in point_list_extrusion_area:
-            IFC_vertices.append(self.ifc.file.createIfcCartesianPoint(pos))
-
-        face = [[0,1,2,3]]
-        cartesian_points = []
-        for vertex in face[0]:
-            cartesian_points.append(IFC_vertices[vertex])
-        polyloop = self.ifc.file.create_entity("IfcPolyLoop", Polygon=cartesian_points)
-        outerbound = self.ifc.file.create_entity("IfcFaceOuterBound", Bound=polyloop, Orientation=True)  # orientation of vertices is CCW
-        innerbounds = []
-        for interior_face in face[1:]:
-            for vertex in interior_face:
-                cartesian_points.append(IFC_vertices[vertex])
-            polyloop = self.ifc.file.create_entity("IfcPolyLoop",  Polygon=cartesian_points)
-            innerbounds.append(self.ifc.file.create_entity("IfcFaceBound",  Bound=polyloop, Orientation=False))  # orientation of vertices is CW 
-        B1_Extruded = self.ifc.file.create_entity("IfcFace", Bounds=[outerbound] + innerbounds)
+        B1_Extruded = create_ifcextrudedareasolid(self.ifc.file,
+                point_list_extrusion_area,
+                B1_ExtrudePlacement, (0.0, 0.0, 1.0), extrusion=length)
         # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
@@ -70,11 +54,29 @@ class ifcSlab():
         Flr1_Container.RelatingStructure = Container
 
 
-    def add_Slab(self, point_list_extrusion_area, position, direction, Floor):
-
+    def add_Slab(self, L, B, b, H, T, i, Floor):
+        origin = (0.0,0.0,0.0)
+        list_origin = list(origin)
+        x1 = B / 2
+        x2 = x1 - b
+        y1 = H - T
+        y2 = -x2 * i
+        y3 = list_origin[0] -T
+        point_list_extrusion_area=[
+            origin,
+            (-x2,  y2, 0.0),
+            (-x2,  y1, 0.0),
+            (-x1,  y1, 0.0),
+            (-x1,  y3, 0.0),
+            ( x1,  y3, 0.0),
+            ( x1,  y1, 0.0),
+            ( x2,  y1, 0.0),
+            ( x2,  y2, 0.0),
+            origin
+            ]
         self.CreateSlab(Floor, Name='Slab-B1',
-            point_list_extrusion_area=point_list_extrusion_area,
-            position=position, direction=direction)
+                        point_list_extrusion_area=point_list_extrusion_area,
+                        position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0), length=L)
 
 
 

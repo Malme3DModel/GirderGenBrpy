@@ -3,13 +3,15 @@ import ifcopenshell
 from src.comon.comon import *
 from src.comon.ifcProject import ifcProject
 
-
 class ifcHsteel():
 
     def __init__(self, ifcProject: ifcProject):
         self.ifc = ifcProject
 
-    def CreateBeam(self, Container, Name, section, L, position, direction):
+
+    def CreateBeam(self, Container, Name, point_list_extrusion_area, position, direction, length):
+
+
 
         B1_Point = self.ifc.file.createIfcCartesianPoint(position)
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
@@ -24,11 +26,9 @@ class ifcHsteel():
             self.ifc.file.createIfcCartesianPoint(Z))
 
         # H鋼 start
-        B1_Extruded = self.ifc.file.createIfcExtrudedAreaSolid()
-        B1_Extruded.SweptArea = section
-        B1_Extruded.Position = B1_ExtrudePlacement
-        B1_Extruded.ExtrudedDirection = self.ifc.file.createIfcDirection(Z)
-        B1_Extruded.Depth = L
+        B1_Extruded = create_ifcextrudedareasolid(self.ifc.file,
+                point_list_extrusion_area,
+                B1_ExtrudePlacement, (0.0, 0.0, 1.0), extrusion = length)
         # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
@@ -41,9 +41,9 @@ class ifcHsteel():
         B1_DefShape.Representations = [B1_Repr]
 
         # H鋼 start
-        B1 = self.ifc.file.createIfcBeam(
+        B1 = self.ifc.file.createIfcSlab(
             create_guid(), self.ifc.owner_hist, Name)
-        B1.ObjectType = 'beam'
+        B1.ObjectType = 'Hsteel'
         B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
         # end
@@ -54,25 +54,51 @@ class ifcHsteel():
         Flr1_Container.RelatingStructure = Container
 
 
-    def add_Beam(self, W, D, tw, tf, r,
-                    L, position, direction, Floor):
+    def add_Beam(self, L, D, W, tf, tw, amount, interval, T, Floor):
+        x1 = (tw / 2.0)
+        x2 = (D / 2.0)
+        dx = ((float(amount)-1.0) * interval / 2.0)
+        dy = tf + T + (W / 2.0)
+        y1 = W / 2.0
+        y2 = y1 + tf / 2.0
+        for i in range(int(amount)):
+            point_list_extrusion_area=[
+                (-x1-dx, -y1-dy, 0.0),
+                (-x2-dx, -y1-dy, 0.0),
+                (-x2-dx, -y2-dy, 0.0),
+                ( x2-dx, -y2-dy, 0.0),
+                ( x2-dx, -y1-dy, 0.0),
+                ( x1-dx, -y1-dy, 0.0),
+                ( x1-dx,  y1-dy, 0.0),
+                ( x2-dx,  y1-dy, 0.0),
+                ( x2-dx,  y2-dy, 0.0),
+                (-x2-dx,  y2-dy, 0.0),
+                (-x2-dx,  y1-dy, 0.0),
+                (-x1-dx,  y1-dy, 0.0),
+                (-x1-dx, -y1-dy, 0.0)
+                ]
+            self.CreateBeam(Floor, Name='Beam-B1',
+                point_list_extrusion_area=point_list_extrusion_area,
+                position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0), length=L)
+            dx -= interval
 
-        section1 = I_Section(self.ifc.file, W, D, tw, tf, r)
-
-        self.CreateBeam(Floor, Name='Beam-B1', section=section1,
-                        L=L, position=position, direction=direction)
 
 
-def I_Section(ifcFile, W , D , tw , tf, r):
-    B1_Axis2Placement2D = ifcFile.createIfcAxis2Placement2D(
-                            ifcFile.createIfcCartesianPoint( (0.,0.) ) )
 
-    B1_AreaProfile = ifcFile.createIfcIShapeProfileDef('AREA')
-    B1_AreaProfile.Position = B1_Axis2Placement2D
-    B1_AreaProfile.OverallWidth = W
-    B1_AreaProfile.OverallDepth = D
-    B1_AreaProfile.WebThickness = tw
-    B1_AreaProfile.FlangeThickness = tf
-    B1_AreaProfile.FilletRadius = r
+# Creates an IfcPolyLine from a list of points, specified as Python tuples
+def create_ifcpolyline(ifcfile, point_list):
+    ifcpts = []
+    for point in point_list:
+        point = ifcfile.createIfcCartesianPoint(point)
+        ifcpts.append(point)
+    polyline = ifcfile.createIfcPolyLine(ifcpts)
+    return polyline
 
-    return B1_AreaProfile
+
+# Creates an IfcExtrudedAreaSolid from a list of points, specified as Python tuples
+def create_ifcextrudedareasolid(ifcfile, point_list, ifcaxis2placement, extrude_dir, extrusion):
+    polyline = create_ifcpolyline(ifcfile, point_list)
+    ifcclosedprofile = ifcfile.createIfcArbitraryClosedProfileDef("AREA", None, polyline)
+    ifcdir = ifcfile.createIfcDirection(extrude_dir)
+    ifcextrudedareasolid = ifcfile.createIfcExtrudedAreaSolid(ifcclosedprofile, ifcaxis2placement, ifcdir, extrusion)
+    return ifcextrudedareasolid
