@@ -104,6 +104,11 @@ class ifcProject:
         mySite.ObjectPlacement = site_placement
         mySite.CompositionType="ELEMENT"
 
+        container_project = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
+        container_project.Name="Project Container"
+        container_project.RelatingObject = myProject
+        container_project.RelatedObjects = [mySite]
+
         building_placement = self.file.createIfcLocalPlacement()
         building_placement.PlacementRelTo = site_placement
         building_placement.RelativePlacement = WorldCoordinateSystem
@@ -113,20 +118,6 @@ class ifcProject:
         self.myBuilding.ObjectPlacement = building_placement
         self.myBuilding.CompositionType="ELEMENT"
 
-        floor1_placement = self.file.createIfcLocalPlacement()
-        floor1_placement.PlacementRelTo = building_placement
-        floor1_placement.RelativePlacement = WorldCoordinateSystem
-
-        floor1 = self.file.createIfcBuildingStorey( create_guid(), self.owner_hist )
-        floor1.Name = "Floor1"
-        floor1.ObjectPlacement = floor1_placement
-        floor1.CompositionType="ELEMENT"
-
-        container_project = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
-        container_project.Name="Project Container"
-        container_project.RelatingObject = myProject
-        container_project.RelatedObjects = [mySite]
-
         container_site = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
         container_site.Name = "Site Container"
         container_site.RelatingObject = mySite
@@ -135,5 +126,17 @@ class ifcProject:
         self.container_storey = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
         self.container_storey.Name = "Building Container"
         self.container_storey.RelatingObject = self.myBuilding
+        self.container_storey.RelatedObjects = []
+
+        self.floor1_placement = self.file.createIfcLocalPlacement()
+        self.floor1_placement.PlacementRelTo = building_placement
+        self.floor1_placement.RelativePlacement = WorldCoordinateSystem
+
+
+    def create_place(self, Name):
+
+        floor1 = self.file.createIfcBuildingStorey( create_guid(), self.owner_hist, Name, None, None, self.myBuilding, None, None, "ELEMENT", 0.0)
+        floor1.ObjectPlacement = self.floor1_placement
         self.container_storey.RelatedObjects = [floor1]
 
+        return floor1
