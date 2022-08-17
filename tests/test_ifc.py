@@ -3,23 +3,15 @@ from src.Girder import Girder
 # H鋼の生成テスト
 def test_Hsteel():
     girder = Girder()
-    girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
-                    L=4.00, position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0))
+    girder.add_Beam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,T=1.0,amount=3.0,interval=1.0)
     return girder.ifc.file
 
 
 # スラブの生成テスト
 def test_Slab():
     girder = Girder()
-    point_list_extrusion_area = [
-            (0.0, -0.2, 0.0),
-            (5.0, -0.2, 0.0),
-            (5.0,  0.2, 0.0),
-            (0.0,  0.2, 0.0),
-            (0.0, -0.2, 0.0)
-            ]
-    girder.add_Slab(point_list_extrusion_area=point_list_extrusion_area,
-                    position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+    girder.add_Slab(B=5.0, b=0.5, H=1.0, T=0.5, i=0.02)
+
     return girder.ifc.file
 
 
@@ -30,10 +22,18 @@ def test_Rebar():
 
     return girder.ifc.file
 
+# 合成桁の生成テスト
+def test_Girder(L, B, b, H, T, i, D, W, tf, tw, amount, interval):
+    girder = Girder()
+    girder.add_Beam(L=L,D=D,W=W,tf=tf,tw=tw,amount=amount,interval=interval,T=T)
+    girder.add_Slab(L=L,B=B,b=b,H=H,T=T,i=i)
+
+
+    return girder.ifc.file
 
 if __name__ == "__main__":
 
     # ifcFile = test_Hsteel()
-    ifcFile = test_Rebar()
-    ifcFile.write("./data/sample_new.ifc")
+    ifcFile = test_Girder(L=10.0, B=5.0, b=0.5, H=1.0, T=0.5, i=0.02, D=0.3, W=1.0, tf=0.012, tw=0.012, amount=3.0, interval=2.0)
+    ifcFile.write("./data/sample_Girder.ifc")
 

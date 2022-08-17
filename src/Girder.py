@@ -17,18 +17,15 @@ class Girder():
 
 
     # H鋼の生成
-    def add_Beam(self, W, D, tw, tf, r,
-                    L, position, direction):
+    def add_Beam(self, L, D, W, tf, tw, amount, interval, T):
         Hsteel = ifcHsteel(self.ifc)
-        Hsteel.add_Beam(W, D, tw, tf, r,
-                    L, position, direction, self.Floor1)
+        Hsteel.add_Beam(L, D, W, tf, tw, amount, interval, T, self.Floor1)
 
 
     # スラブの生成
-    def add_Slab(self, point_list_extrusion_area, position, direction):
+    def add_Slab(self, L, B, b, H, T, i):
         Slab = ifcSlab(self.ifc)
-        Slab.add_Slab(point_list_extrusion_area,
-                    position, direction, self.Floor1)
+        Slab.add_Slab(L, B, b, H, T, i, self.Floor1)
 
 
     # 鉄筋の生成
