@@ -6,6 +6,8 @@ from src.comon.ifcProject import ifcProject
 from src.Hsteel.ifcHsteel import ifcHsteel
 from src.Hsteel.ifcBeam import ifcBeam
 from src.Slab.ifcSlab import ifcSlab
+from src.Slab.ifcObj import ifcObj
+
 from src.Rebar.ifcRebar import ifcRebar
 
 class Girder():
@@ -32,6 +34,10 @@ class Girder():
         Slab = ifcSlab(self.ifc)
         Slab.add_Slab(L, B, b, H, T, i, self.Floor1)
 
+    # 任意形状の生成
+    def add_Obj(self, vertices, faces):
+        Slab = ifcObj(self.ifc)
+        Slab.add_Slab(vertices, faces, self.Floor1)
 
     # 鉄筋の生成
     def add_Rebar(self, position, direction):
