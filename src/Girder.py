@@ -4,6 +4,7 @@
 
 from src.comon.ifcProject import ifcProject
 from src.Hsteel.ifcHsteel import ifcHsteel
+from src.Hsteel.ifcBeam import ifcBeam
 from src.Slab.ifcSlab import ifcSlab
 from src.Rebar.ifcRebar import ifcRebar
 
@@ -17,10 +18,14 @@ class Girder():
 
 
     # H鋼の生成
-    def add_Beam(self, L, D, W, tf, tw, amount, interval, T):
+    def add_Hsteel(self, L, D, W, tf, tw, amount, interval, T):
         Hsteel = ifcHsteel(self.ifc)
         Hsteel.add_Beam(L, D, W, tf, tw, amount, interval, T, self.Floor1)
 
+    # H鋼の生成
+    def add_Beam(self, L, D, W, tf, tw, amount, interval, T):
+        Beam = ifcBeam(self.ifc)
+        Beam.add_Beam(L, D, W, tf, tw, amount, interval, T, self.Floor1)
 
     # スラブの生成
     def add_Slab(self, L, B, b, H, T, i):
@@ -32,3 +37,4 @@ class Girder():
     def add_Rebar(self, position, direction):
         Rebar = ifcRebar(self.ifc)
         Rebar.add_Rebar(position, direction, self.Floor1)
+

@@ -1,7 +1,7 @@
 from src.Girder import Girder
 
 # H鋼の生成テスト
-def test_Hsteel():
+def test_Beam():
     girder = Girder()
     girder.add_Beam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,T=1.0,amount=3.0,interval=1.0)
 
@@ -38,7 +38,7 @@ def test_Girder():
     tw=0.012
     amount=3.0
     interval=2.0
-    girder.add_Beam(L=L,D=D,W=W,tf=tf,tw=tw,amount=amount,interval=interval,T=T)
+    girder.add_Hsteel(L=L,D=D,W=W,tf=tf,tw=tw,amount=amount,interval=interval,T=T)
     girder.add_Slab(L=L,B=B,b=b,H=H,T=T,i=i)
 
 
@@ -48,6 +48,8 @@ def test_Girder():
 
 if __name__ == "__main__":
 
-    ifcFile = test_Girder()
+    ifcFile = test_Beam()
+
+    # ifcFile = test_Girder()
     ifcFile.write("./data/sample_Girder.ifc")
 
