@@ -6,10 +6,33 @@ from src.Slab.ifcObj import ifcObj
 
 # スラブの生成テスト
 def test_Obj():
-    Model = test_createModel().triangulate()
-    vertices = Model.points.astype(float)
-    vertices = vertices/1000
-    faces = Model.faces.reshape(-1, 4)
+    Model = test_createModel()
+    vertices = []
+    faces = []
+
+    fliePath = './data/Box.obj'
+    pv.save_meshio(fliePath, Model)
+
+    for line in open(fliePath, "r"):
+        vals = line.split()
+
+        if len(vals) == 0:
+            continue
+
+        if vals[0] == "v":
+            v = list(map(float, vals[1:4]))
+            vertices.append(v)
+
+        if vals[0] == "f":
+            fvID = []
+            for f in vals[1:]:
+                w = f.split("/")
+                fvID.append(int(w[0])-1)
+            faces.append(fvID)
+
+    # vertices = Model.points.astype(float)
+    # vertices = vertices
+    # faces = Model.faces.reshape(-1, 4)
 
     return exchangeIFC(vertices, faces)
 
