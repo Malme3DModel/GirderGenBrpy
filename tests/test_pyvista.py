@@ -30,10 +30,6 @@ def test_Obj():
                 fvID.append(int(w[0])-1)
             faces.append(fvID)
 
-    # vertices = Model.points.astype(float)
-    # vertices = vertices
-    # faces = Model.faces.reshape(-1, 4)
-
     return exchangeIFC(vertices, faces)
 
 
@@ -50,26 +46,6 @@ def exchangeIFC(vertices, faces):
     Floor1 = ifc.create_place("Floor 1")
     Slab = ifcObj(ifc)
 
-    # vertices = [
-    # (-1.0, -1.0, -1.0),
-    # ( 1.0, -1.0, -1.0),
-    # (-1.0,  1.0, -1.0),
-    # ( 1.0,  1.0, -1.0),
-    # (-1.0, -1.0,  1.0),
-    # ( 1.0, -1.0,  1.0),
-    # (-1.0,  1.0,  1.0),
-    # ( 1.0,  1.0,  1.0)
-    # ]
-
-    # faces = [
-    # (0, 2, 3, 1),
-    # (0, 4, 6, 2),
-    # (1, 3, 7, 5),
-    # (0, 1, 5, 4),
-    # (2, 6, 7, 3),
-    # (4, 5, 7, 6)
-    # ]
-
     Slab.add_Slab(vertices, faces, Floor1)
     return ifc.file
 
@@ -79,3 +55,12 @@ if __name__ == "__main__":
 
     ifcFile = test_Obj()
     ifcFile.write("./data/sample_pyVista.ifc")
+
+
+    # # objファイルを作成
+    # Model = test_createModel()
+    # filename = './data/testGirder.obj'
+    # pv.save_meshio(filename, Model)
+
+    # mesh = pv.read(filename)
+    # mesh.plot(show_edges=True)
