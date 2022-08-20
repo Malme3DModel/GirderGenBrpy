@@ -1,3 +1,5 @@
+import pyvista as pv
+
 from src.Slab.pvObj import pvObj
 
 # スラブの生成テスト
@@ -10,5 +12,9 @@ if __name__ == "__main__":
 
     Model = test_Obj()
 
-    # ifcFile = test_Girder()
-    ifcFile.write("./data/sample_Girder.ifc")
+    # objファイルを作成
+    filename = './data/vista.obj'
+    pv.save_meshio(filename, Model)
+
+    mesh = pv.read(filename)
+    mesh.plot(show_edges=True)
