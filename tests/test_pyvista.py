@@ -3,6 +3,7 @@ import pyvista as pv
 from src.comon.ifcProject import ifcProject
 from src.Slab.pvObj import pvObj
 from src.Slab.ifcObj import ifcObj
+from src.Hsteel.pvHsteel import Girder
 
 # スラブの生成テスト
 def test_Obj():
@@ -49,11 +50,15 @@ def exchangeIFC(vertices, faces):
     Slab.add_Slab(vertices, faces, Floor1)
     return ifc.file
 
+def test_createBeam():
+    Model = Girder.CreateBeam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,position=(0.0,0.0,0.0))
+    return Model
+
 
 
 if __name__ == "__main__":
 
-    ifcFile = test_Obj()
+    ifcFile = test_createBeam()
     ifcFile.write("./data/sample_pyVista.ifc")
 
 
