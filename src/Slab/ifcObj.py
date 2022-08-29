@@ -18,19 +18,27 @@ class ifcObj():
 
         ifc_faces = []
         for face in faces:
+            # 座標点の配列を作成
+            point_list = []
+            for index in face:
+                v = vertices[index]
+                try:
+                    v = v.tolist()
+                except:
+                    pass
+                p = self.ifc.file.createIfcCartesianPoint(v)
+                point_list.append(p)
+            # 面を作成
             ifc_faces.append(
                 self.ifc.file.createIfcFace(
                     [
                         self.ifc.file.createIfcFaceOuterBound(
-                            self.ifc.file.createIfcPolyLoop(
-                                [self.ifc.file.createIfcCartesianPoint(vertices[index-1]) for index in face]
-                            ),
+                            self.ifc.file.createIfcPolyLoop(point_list),
                             True,
                         )
                     ]
                 )
             )
-
 
         B1_Point =self.ifc.file.createIfcCartesianPoint ( position )
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
