@@ -1,38 +1,45 @@
 from src.Girder import Girder
 
 # H鋼の生成テスト
-def test_Hsteel():
+def test_Beam():
     girder = Girder()
-    girder.add_Beam(W=0.2, D=0.3, tw=0.012, tf=0.012, r = 2*0.012,
-                    L=4.00, position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0))
+    girder.add_Beam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,T=1.0,amount=3.0,interval=1.0)
+
     return girder.ifc.file
 
 
 # スラブの生成テスト
-def test_Slab():
+def test_Obj():
+    vertices = [
+    (-1.0, -1.0, -1.0),
+    ( 1.0, -1.0, -1.0),
+    (-1.0,  1.0, -1.0),
+    ( 1.0,  1.0, -1.0),
+    (-1.0, -1.0,  1.0),
+    ( 1.0, -1.0,  1.0),
+    (-1.0,  1.0,  1.0),
+    ( 1.0,  1.0,  1.0)
+    ]
+
+    faces = [
+    (1, 3, 4, 2),
+    (1, 5, 7, 3),
+    (2, 4, 8, 6),
+    (1, 2, 6, 5),
+    (3, 7, 8, 4),
+    (5, 6, 8, 7)
+    ]
+
     girder = Girder()
-    point_list_extrusion_area = [
-            (0.0, -0.2, 0.0),
-            (5.0, -0.2, 0.0),
-            (5.0,  0.2, 0.0),
-            (0.0,  0.2, 0.0),
-            (0.0, -0.2, 0.0)
-            ]
-    girder.add_Slab(point_list_extrusion_area=point_list_extrusion_area,
-                    position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
+    girder.add_Obj(vertices, faces)
+
     return girder.ifc.file
 
-
-# 鉄筋の生成テスト
-def test_Rebar():
-    girder = Girder()
-    girder.add_Rebar(position=(0.0,0.0,0.0) , direction=(1.0,0.0,0.0))
-
-    return girder.ifc.file
 
 if __name__ == "__main__":
 
-    # ifcFile = test_Hsteel()
-    ifcFile = test_Rebar()
-    ifcFile.write("./data/sample_new.ifc")
+    ifcFile = test_Obj()
+
+    # ifcFile = test_Girder()
+    ifcFile.write("./data/sample_Girder.ifc")
 

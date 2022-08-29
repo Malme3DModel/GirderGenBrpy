@@ -9,11 +9,9 @@ class ifcSlab():
         self.ifc = ifcProject
 
 
-    def CreateSlab(self, Container, Name, point_list_extrusion_area, position, direction):
+    def CreateSlab(self, Container, Name, point_list_extrusion_area, position, direction, length):
 
-        B1 = self.ifc.file.createIfcSlab(
-            create_guid(), self.ifc.owner_hist, Name)
-        B1.ObjectType = 'slab'
+
 
         B1_Point = self.ifc.file.createIfcCartesianPoint(position)
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
@@ -23,16 +21,15 @@ class ifcSlab():
 
         B1_Placement = self.ifc.file.createIfcLocalPlacement(
             Container.ObjectPlacement, B1_Axis2Placement)
-        B1.ObjectPlacement = B1_Placement
 
         B1_ExtrudePlacement = self.ifc.file.createIfcAxis2Placement3D(
             self.ifc.file.createIfcCartesianPoint(Z))
 
-        # スラブ
+        # スラブ start
         B1_Extruded = create_ifcextrudedareasolid(self.ifc.file,
                 point_list_extrusion_area,
-                B1_ExtrudePlacement, (0.0, 0.0, 1.0), 3.0)
-        #
+                B1_ExtrudePlacement, (0.0, 0.0, 1.0), extrusion=length)
+        # end
 
         B1_Repr = self.ifc.file.createIfcShapeRepresentation()
         B1_Repr.ContextOfItems = self.ifc.context
@@ -42,7 +39,14 @@ class ifcSlab():
 
         B1_DefShape = self.ifc.file.createIfcProductDefinitionShape()
         B1_DefShape.Representations = [B1_Repr]
+
+        # スラブ start
+        B1 = self.ifc.file.createIfcSlab(
+            create_guid(), self.ifc.owner_hist, Name)
+        B1.ObjectType = 'slab'
+        B1.ObjectPlacement = B1_Placement
         B1.Representation = B1_DefShape
+        # end
 
         Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(
             create_guid(), self.ifc.owner_hist)
@@ -50,11 +54,29 @@ class ifcSlab():
         Flr1_Container.RelatingStructure = Container
 
 
-    def add_Slab(self, point_list_extrusion_area, position, direction, Floor):
-
+    def add_Slab(self, L, B, b, H, T, i, Floor):
+        origin = (0.0,0.0,0.0)
+        list_origin = list(origin)
+        x1 = B / 2
+        x2 = x1 - b
+        y1 = H - T
+        y2 = -x2 * i
+        y3 = list_origin[0] -T
+        point_list_extrusion_area=[
+            origin,
+            (-x2,  y2, 0.0),
+            (-x2,  y1, 0.0),
+            (-x1,  y1, 0.0),
+            (-x1,  y3, 0.0),
+            ( x1,  y3, 0.0),
+            ( x1,  y1, 0.0),
+            ( x2,  y1, 0.0),
+            ( x2,  y2, 0.0),
+            origin
+            ]
         self.CreateSlab(Floor, Name='Slab-B1',
-            point_list_extrusion_area=point_list_extrusion_area,
-            position=position, direction=direction)
+                        point_list_extrusion_area=point_list_extrusion_area,
+                        position=(0.0,0.0,0.0), direction=(1.0,0.0,0.0), length=L)
 
 
 
