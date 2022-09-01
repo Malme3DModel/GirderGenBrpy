@@ -1,15 +1,29 @@
 import pyvista as pv
 import numpy as np
+import math
+from src.pvTranlate import Move
 
-pv.rcParams['transparent_background'] = True
+b1 = 4.25
+b2 = 4.25
+b3 = 0.6
+i1 = 0.02
+i2 = 0.02
+H = 0.55
+T1 = 0.2
+T2 = 0.35
+n = 3.0 #1:n
+s = 1.0 #端部から主桁中心までの離隔
+D = 0.2 #ハンチ幅
+L = 33.0
+B = b1 + b2 + b3
+amount_V = 3.0
+interval_V = (B-2*s)/(amount_V-1.0)
 
-
-class Girder():
-
+class AddSlab():
     def __init__(self):
         pass
     
-    def sectional(H, T, b1, b2, b3, i1, i2, position):
+    def selection(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, position):
         position = list(position)
         x = position[0]
         y = position[1]
@@ -18,113 +32,71 @@ class Girder():
         dx2 = -(b1+b3)
         dx3 = b2+b3
         dx4 = b2
+        dx5 = dx2 + (s - D/ 2.0)
+        dx6 = dx3 - (s - D/ 2.0)
+        dx7 = dx5 + D
+        dx8 = dx6 - D
         dz1 = -b1*i1
-        dz2 = H-T
-        dz3 = -T
+        dz2 = dz1 + (H - T1 - b3 * i1)
+        dz3 = dz1 - (T1 - b3 * i1)
         dz4 = -b2*i2
-        a1 = [x+dx1, y, z+dz1]
-        a2 = [x+dx1, y, z+dz2]
-        a3 = [x+dx2, y, z+dz2]
-        a4 = [x+dx2, y, z+dz3]
-        a5 = [x+dx3, y, z+dz3]
-        a6 = [x+dx3, y, z+dz2]
-        a7 = [x+dx4, y, z+dz2]
-        a8 = [x+dx4, y, z+dz4]
-        points = [a1, a2, a3, a4, a5, a6, a7, a8]
+        dz5 = -T2
+        dx9 = dx7 + ((dz3-dz5) + ((s - D/ 2.0) + D)*i1)/((1/n) - i1)
+        dx10 = dx8 - ((dz3-dz5) + ((s - D/ 2.0) + D)*i2)/((1/n) - i2)
+        dz6 = dz5 + ((dz3-dz5) + ((s - D/ 2.0) + D)*i1)/((1/n) - i1) / n
+        dz7 = dz5 + ((dz3-dz5) + ((s - D/ 2.0) + D)*i2)/((1/n) - i2) / n
+        dz8 = -T1
+        x1 = x + dx1
+        x2 = x + dx2
+        x3 = x + dx3
+        x4 = x + dx4
+        x5 = x + dx5
+        x6 = x + dx6
+        x7 = x + dx7
+        x8 = x + dx8
+        x9 = x + dx9
+        x10 = x + dx10
+        z1 = z + dz1
+        z2 = z + dz2
+        z3 = z + dz3
+        z4 = z + dz4
+        z5 = z + dz5
+        z6 = z + dz6
+        z7 = z + dz7
+        z8 = z + dz8
+        a0 = [x, y, z]
+        a1 = [x1, y, z1]
+        a2 = [x1, y, z2]
+        a3 = [x2, y, z2]
+        a4 = [x2, y, z3]
+        a5 = [x5, y, z5]
+        a6 = [x7, y, z5]
+        a7 = [x9, y, z6]
+        a8 = [x, y, z8]
+        a9 = [x10, y, z7]
+        a10 = [x8, y, z5]
+        a11 = [x6, y, z5]
+        a12 = [x3, y, z3]
+        a13 = [x3, y, z2]
+        a14 = [x4, y, z2]
+        a15 = [x4, y, z4]
+        points = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15]
         return points
 
-    def alignment(Stations, R, detail):
-        BP = Stations[0]
-        PVI = Stations[1]
-        EP = Stations[2]
-        
-        x0 = BP[0]
-        y0 = BP[1]
-        z0 = BP[2]
-        
-        x1 = PVI[0]
-        y1 = PVI[1]
-        z1 = PVI[2]
-        
-        x2 = EP[0]
-        y2 = EP[1]
-        z2 = EP[2]
-        
-        #前面勾配の算出
-        length2D1 = np.sqrt((x0-x1)**2.0 + (y0-y1)**2.0)
-        length3D1 = np.sqrt(length2D1**2.0 + (z0-z1)**2.0)
-        i1 = (z1-z0)/length2D1
-        
-        #背面勾配の算出
-        length2D2 = np.sqrt((x1-x2)**2.0 + (y1-y2)**2.0)
-        length3D2 = np.sqrt(length2D2**2.0 + (z1-z2)**2.0)
-        i2 = (z2-z1)/length2D2
-        
-        #VCLを算出し、曲線の始終点を計算
-        VCL = R*np.absolute(i1-i2)
-        
-        VCP = []
-        for i in range(int(detail)):
-            if z0 < z1:
-                d_length2D1 = length2D1 - (VCL/2.0)+(VCL/detail/2.0)*i
-                dx1 = (VCL/detail/2.0)*i
-                dz = ((i1-i2)*(dx1)**2.0)/(200.0*VCL)
-                xvc = x0 + (d_length2D1/length2D1)*(x1-x0)
-                yvc = y0 + (d_length2D1/length2D1)*(y1-y0)
-                zvc = z0 + ((d_length2D1/length2D1)*(z1-z0) - dz)
-                point = [xvc, yvc, zvc]
-            else:
-                d_length2D1 = length2D1 - (VCL/2.0)+(VCL/detail/2.0)*i
-                dz = ((i1-i2)*(d_length2D1)**2.0)/(200.0*VCL)
-                xvc = x0 + (d_length2D1/length2D1)*(x1-x0)
-                yvc = y0 + (d_length2D1/length2D1)*(y1-y0)
-                zvc = z0 - ((d_length2D1/length2D1)*(z1-z0) - dz)
-                point = [xvc, yvc, zvc]
-            VCP.append(point)
-        
-        for i in range(int(detail+1)):
-            if z1 > z2:
-                d_length2D2 = length2D2 - (VCL/detail/2.0)*i
-                dx2 = (VCL/2.0) - (VCL/detail/2.0)*i
-                dz = ((i1-i2)*(dx2)**2.0)/(200.0*VCL)
-                xvc = x2 + (d_length2D2/length2D2)*(x1-x2)
-                yvc = y2 + (d_length2D2/length2D2)*(y1-y2)
-                zvc = z2 + ((d_length2D2/length2D2)*(z1-z2) - dz)
-                point = [xvc, yvc, zvc]
-            else:
-                d_length2D2 = length2D2 - (VCL/detail/2.0)*i
-                dz = ((i1-i2)*(d_length2D2)**2.0)/(200.0*VCL)
-                xvc = x2 + (d_length2D2/length2D2)*(x1-x2)
-                yvc = y2 + (d_length2D2/length2D2)*(y1-y2)
-                zvc = z2 - ((d_length2D2/length2D2)*(z1-z2) - dz)
-                point = [xvc, yvc, zvc]
-            VCP.append(point)
-        CP = []
-        CP.append(BP)
-        CP.insert(1,VCP)
-        CP.append(EP)
-        return CP
-    
-    def create_pointlist(H, T, b1, b2, b3, i1, i2, points, R, detail):
-        CP = alignment(points, R, detail)
-        pointlist = []
-        for i in range(len(CP)):
-            points = sectional(H, T, b1, b2, b3, i1, i2, position=CP[0])
-            pointlist.append(points)
-        return pointlist
+    def createSlab(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, L):
+        points_BP = self.selection(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, position=(0.0,0.0,0.0))
+        points_EP = self.selection(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, position=(0.0,L,0.0))
+        pointlist = [points_BP, points_EP]
 
-    def create_mesh(H, T, b1, b2, b3, i1, i2, points, R, detail):
-        pointlist = create_pointlist(H, T, b1, b2, b3, i1, i2, points, R, detail)
-        #筒状のメッシュを作成
         Mesh = []
         for i in range(len(pointlist)-1):
-            A = pointlist[i]
-            B = pointlist[i+1]
-            C = A[1:]+A[:1]
-            D = B[1:]+B[:1]
-            for j in range(len(A)):
-                Apoints = [A[j], C[j], B[j]]
-                Bpoints = [B[j], D[j], C[j]]
+            A1 = pointlist[i]
+            A2 = pointlist[i+1]
+            A3 = A1[1:]+A1[:1]
+            A4 = A2[1:]+A2[:1]
+            for j in range(len(A1)):
+                Apoints = [A1[j], A3[j], A2[j]]
+                Bpoints = [A2[j], A4[j], A3[j]]
                 Mesh_A = pv.PolyData(Apoints, [3, 0, 1, 2])
                 Mesh.append(Mesh_A)
                 Mesh_B = pv.PolyData(Bpoints, [3, 0, 1, 2])
@@ -132,23 +104,22 @@ class Girder():
             Model = Mesh[0]
             for k in range(len(Mesh)-1):
                 Model += Mesh[k+1]
-        #蓋を作成(構造物ごとに作成)
+
         Lib1 = pointlist[0]
-        Lib2 = pointlist[len(pointlist)]
         p1 = [Lib1[0],Lib1[1],Lib1[8]]
         p2 = [Lib1[1],Lib1[2],Lib1[3]]
         p3 = [Lib1[1],Lib1[3],Lib1[4]]
         p4 = [Lib1[1],Lib1[4],Lib1[5]]
-        p5 = [Lib1[1],Lib1[5],Lib1[8]]
-        p6 = [Lib1[5],Lib1[6],Lib1[8]]
-        p7 = [Lib1[6],Lib1[7],Lib1[8]]
-        p8 = [Lib2[0],Lib2[1],Lib2[8]]
-        p9 = [Lib2[1],Lib2[2],Lib2[3]]
-        p10 = [Lib2[1],Lib2[3],Lib2[4]]
-        p11 = [Lib2[1],Lib2[4],Lib2[5]]
-        p12 = [Lib2[1],Lib2[5],Lib2[8]]
-        p13 = [Lib2[5],Lib2[6],Lib2[8]]
-        p14 = [Lib2[6],Lib2[7],Lib2[8]]
+        p5 = [Lib1[1],Lib1[5],Lib1[6]]
+        p6 = [Lib1[1],Lib1[6],Lib1[7]]
+        p7 = [Lib1[1],Lib1[7],Lib1[8]]
+        p8 = [Lib1[0],Lib1[8],Lib1[15]]
+        p9 = [Lib1[8],Lib1[9],Lib1[15]]
+        p10 = [Lib1[9],Lib1[10],Lib1[15]]
+        p11 = [Lib1[10],Lib1[11],Lib1[15]]
+        p12 = [Lib1[11],Lib1[12],Lib1[15]]
+        p13 = [Lib1[12],Lib1[13],Lib1[15]]
+        p14 = [Lib1[13],Lib1[14],Lib1[15]]
         m1 = pv.PolyData(p1, [3, 0, 1, 2])
         m2 = pv.PolyData(p2, [3, 0, 1, 2])
         m3 = pv.PolyData(p3, [3, 0, 1, 2])
@@ -163,5 +134,68 @@ class Girder():
         m12 = pv.PolyData(p12, [3, 0, 1, 2])
         m13 = pv.PolyData(p13, [3, 0, 1, 2])
         m14 = pv.PolyData(p14, [3, 0, 1, 2])
-        Model += m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12+m13+m14
+        Mesh_Lib1 = m1+m2+m3+m4+m5+m6+m7+m8+m9+m10+m11+m12+m13+m14
+        Mesh_Lib2 = Move.MoveObject(Move, obj=Mesh_Lib1, coordinate=(0.0,L,0.0))
+        Model += Mesh_Lib1 + Mesh_Lib2
         return Model
+
+    def createHunch(self, T1, T2, D, n, L):
+        Hz = T2 - T1
+        Hx1 = D / 2.0
+        Hx2  = Hx1 + n * Hz
+
+        H1 = [-Hx1, 0.0, 0.0]
+        H2 = [-Hx2, 0.0, Hz]
+        H3 = [Hx2, 0.0, Hz]
+        H4 = [Hx1, 0.0, 0.0]
+        H5 = [-Hx1, L, 0.0]
+        H6 = [-Hx2, L, Hz]
+        H7 = [Hx2, L, Hz]
+        H8 = [Hx1, L, 0.0]
+        Hp1 = [H1, H2, H3]
+        Hp2 = [H1, H3, H4]
+        Hp3 = [H5, H6, H7]
+        Hp4 = [H5, H7, H8]
+        Hm1 = pv.PolyData(Hp1, [3, 0, 1, 2])
+        Hm2 = pv.PolyData(Hp2, [3, 0, 1, 2])
+        Hm3 = pv.PolyData(Hp3, [3, 0, 1, 2])
+        Hm4 = pv.PolyData(Hp4, [3, 0, 1, 2])
+        Model = Hm1 + Hm2 + Hm3 + Hm4
+
+        pointlist = [[H1, H2, H3, H4],[H5, H6, H7, H8]]
+
+        Mesh = []
+        for i in range(len(pointlist)-1):
+            A1 = pointlist[i]
+            A2 = pointlist[i+1]
+            A3 = A1[1:]+A1[:1]
+            A4 = A2[1:]+A2[:1]
+            for j in range(len(A1)):
+                Apoints = [A1[j], A3[j], A2[j]]
+                Bpoints = [A2[j], A4[j], A3[j]]
+                Mesh_A = pv.PolyData(Apoints, [3, 0, 1, 2])
+                Mesh.append(Mesh_A)
+                Mesh_B = pv.PolyData(Bpoints, [3, 0, 1, 2])
+                Mesh.append(Mesh_B)
+            for k in range(len(Mesh)):
+                Model += Mesh[k]
+        return Model
+
+    def add_Slab(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, L, amount_V, interval_V):
+        Model_S = self.createSlab(self, b1, b2, b3, i1, i2, H, T1, T2, n, s, D, L)
+        Model_H = self.createHunch(self, T1, T2, D, n, L)
+
+        x = -(amount_V-3.0)*(interval_V/2.0)
+        z = -T2
+        Models_H = []
+        for i in range(int(amount_V)-2):
+            Model_H1 = Move.MoveObject(Move, obj=Model_H, coordinate=(x, 0.0, z))
+            Models_H.append(Model_H1)
+            x += interval_V
+
+        Obj_H = Models_H[0]
+        for i in range(len(Models_H)-1):
+            Obj_H += Models_H[i+1]
+
+        Obj = Model_S + Obj_H
+        return Obj

@@ -7,6 +7,7 @@ from src.Hsteel.ifcHsteel import ifcHsteel
 from src.Hsteel.ifcBeam import ifcBeam
 from src.Slab.ifcSlab import ifcSlab
 from src.Slab.ifcObj import ifcObj
+from src.Slab.pvSlab import pvSlab
 
 from src.Rebar.ifcRebar import ifcRebar
 
@@ -43,4 +44,9 @@ class Girder():
     def add_Rebar(self, position, direction):
         Rebar = ifcRebar(self.ifc)
         Rebar.add_Rebar(position, direction, self.Floor1)
+        
+    
+    def createSlab(self, H, T, b1, b2, b3, i1, i2, points, R, detail):
+        Slab = pvSlab(self.ifc)
+        Slab.create_mesh(H, T, b1, b2, b3, i1, i2, points, R, detail, self.Floor1)
 
