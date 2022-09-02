@@ -4,6 +4,8 @@ from src.comon.ifcProject import ifcProject
 from src.Slab.pvObj import pvObj
 from src.Slab.ifcObj import ifcObj
 from src.Hsteel.pvHsteel import Girder
+from src.Slab.pvSlab_test2 import pvSlab
+from src.Girder import Girder
 
 # スラブの生成テスト
 def test_Obj():
@@ -54,11 +56,14 @@ def test_createBeam():
     Model = Girder.CreateBeam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,position=(0.0,0.0,0.0))
     return Model
 
-
+def createSlab():
+    girder = Girder()
+    Model = girder.createSlab(H=1.0, T=0.5, b1=10.0, b2=10.0, b3=0.5, i1=0.01, i2=0.01, points=[[0.0,0.0,0.0],[15.0,20.0,1.50],[30.0,40.0,0.0]], R=100.0, detail=10.0)
+    return Model
 
 if __name__ == "__main__":
 
-    ifcFile = test_createBeam()
+    ifcFile = createSlab()
     ifcFile.write("./data/sample_pyVista.ifc")
 
 
