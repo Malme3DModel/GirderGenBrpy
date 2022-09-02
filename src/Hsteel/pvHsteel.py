@@ -3,12 +3,12 @@ import pyvista as pv
 pv.rcParams['transparent_background'] = True
 
 
-class Girder():
+class Hsteel():
 
     def __init__(self):
         pass
     
-    def CreateBeam(L, D, W, tf, tw, position):
+    def CreateBeam(self, L, D, W, tf, tw, position):
         position = list(position)
         x = position[0]
         y = position[1]
@@ -125,7 +125,3 @@ class Girder():
         patch = m25+m26+m27+m28+m29+m30+m31+m32+m33+m34+m35+m36
         Model = Model + patch
         return Model
-    
-    Model = CreateBeam(L=10.0, D=0.3, W=0.2, tf=0.012, tw=0.012, position=(0.0,0.0,0.0))
-
-    Model.plot(cpos='xy', show_edges=True)
