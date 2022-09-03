@@ -1,24 +1,27 @@
 FROM continuumio/miniconda3
 
-RUN conda create -n ifcos python==3.8
+# # ifcOpenshell のアーカイブをダウンロード
+# RUN wget https://s3.amazonaws.com/ifcopenshell-builds/ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
+# # ifcOpenshell のアーカイブを解凍
+# RUN apt-get update
+# RUN apt-get install unzip
+# RUN unzip ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
+# RUN rm ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
+# # ifcOpenshell をコピー
+# RUN mv ifcopenshell /opt/conda/lib/python3.9/site-packages
 
-SHELL ["conda", "run", "-n", "ifcos", "/bin/bash", "-c"]
-RUN conda install -c conda-forge -c oce -c dlr-sc -c ifcopenshell ifcopenshell
+
+RUN conda install -c conda-forge ifcopenshell
+# pyvistaをインストール
 RUN conda install -c conda-forge pyvista
-
-ENV LANG=en_US.UTF-8
-ENV TZ=:/etc/localtime
-ENV PATH=/var/lang/bin:/usr/local/bin:/usr/bin/:/bin:/opt/bin
-ENV LD_LIBRARY_PATH=/var/lang/lib:/lib64:/usr/lib64:/var/runtime:/var/runtime/lib:/var/task:/var/task/lib:/opt/lib
-ENV LAMBDA_TASK_ROOT=/var/task
-ENV LAMBDA_RUNTIME_DIR=/var/runtime
-
-WORKDIR /var/task
-
-ENTRYPOINT ["/lambda-entrypoint.sh"]
+RUN conda install meshio
 
 
-COPY app.py   /var/task
-COPY ./src   /var/task/src
+
+
+
+
+COPY app.py   ./
+COPY ./src   ./src
 
 CMD ["app.handler"]  
