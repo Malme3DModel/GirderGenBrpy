@@ -115,5 +115,4 @@ def test_Obj():
 
 if __name__ == "__main__":
 
-    ifcFile = test_Obj()
-    ifcFile.write("./data/sample_pyVista.ifc")
+    ifcStr = test_Obj()

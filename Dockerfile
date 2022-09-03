@@ -10,11 +10,12 @@ FROM continuumio/miniconda3
 # # ifcOpenshell をコピー
 # RUN mv ifcopenshell /opt/conda/lib/python3.9/site-packages
 
+RUN apt-get update
+RUN apt-get install libgl1-mesa-dev
 
 RUN conda install -c conda-forge ifcopenshell
-# pyvistaをインストール
 RUN conda install -c conda-forge pyvista
-RUN conda install meshio
+RUN conda install -c conda-forge meshio
 
 
 
