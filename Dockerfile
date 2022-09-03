@@ -1,27 +1,22 @@
-FROM continuumio/miniconda3
+FROM public.ecr.aws/lambda/python:3.8
 
-# # ifcOpenshell のアーカイブをダウンロード
-# RUN wget https://s3.amazonaws.com/ifcopenshell-builds/ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
-# # ifcOpenshell のアーカイブを解凍
-# RUN apt-get update
-# RUN apt-get install unzip
-# RUN unzip ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
-# RUN rm ifcopenshell-python-39-v0.7.0-e508fb4-linux64.zip
-# # ifcOpenshell をコピー
-# RUN mv ifcopenshell /opt/conda/lib/python3.9/site-packages
+RUN yum update -y
+RUN yum install wget -y 
 
-RUN apt-get update
-RUN apt-get install libgl1-mesa-dev
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh -O ~/Miniconda.sh 
+RUN /bin/bash ~/Miniconda.sh -b -p ~/miniconda3
+RUN rm ~/Miniconda.sh 
+# echo ". ~/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+# echo "conda activate base" >> ~/.bashrc
 
+ENV PATH ~/miniconda3/bin:$PATH
+
+RUN yum install mesa-libGL-devel -y 
 RUN conda install -c conda-forge ifcopenshell
 RUN conda install -c conda-forge pyvista
 RUN conda install -c conda-forge meshio
 
-
-
-
-
-
+# 自分のモジュールをコピー
 COPY app.py   ./
 COPY ./src   ./src
 
