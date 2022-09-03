@@ -1,17 +1,119 @@
 import pyvista as pv
 
 from src.comon.ifcProject import ifcProject
-from src.Slab.pvObj import pvObj
-from src.Slab.ifcObj import ifcObj
-from src.Hsteel.pvHsteel import Girder
-from src.Slab.pvSlab_test2 import pvSlab
-from src.Girder import Girder
+from src.pvGirder import createGirder
 
 # スラブの生成テスト
 def test_Obj():
-    Model = test_createModel()
-    vertices = []
-    faces = []
+
+    #スラブのパラメータ
+    b1 = 4.25
+    b2 = 4.25
+    b3 = 0.6
+    i1 = 0.02
+    i2 = 0.02
+    SH = 0.55
+    T1 = 0.2
+    T2 = 0.35
+    n = 3.0 #1:n
+    Ss = 1.0 #端部から主桁中心までの離隔
+
+    #主桁のパラメータ
+    amount_V = 3.0 #主桁の本数
+    W = 1.70
+    D = 0.31
+    tw = 0.028
+    tf = 0.024
+
+    #中間対傾構のパラメータ
+    A = 0.15
+    B = 0.15
+    H = 1.38
+    t = 0.009
+    s = 0.1 #離隔
+    s_in = 0.16
+    s_out = 0.16
+    location = [1,2,4,5] #中間対傾構を配置する列番号（起点側から0）
+    dz = 0.30 #ウェブから対傾構までの離隔
+
+    #横構のパラメータ
+    W2 = 0.12
+    D3 = 0.18
+    tf2 = 0.012
+    tw2 = 0.012
+    s_edge = 0.2 #端部における主桁からの離隔
+    s_middle = 0.2 #中間部における主桁からの離隔
+
+    #荷重分配横桁のパラメータ
+    W3 = 1.28
+    D4 = 0.25
+    tf3 = 0.012
+    tw3 = 0.012
+    location2 = [3] #荷重分配横桁を配置する列番号（起点側から0）
+    s_edge2 = 0.0 #端部における主桁からの離隔
+    s_middle2 = 0.0 #中間部における主桁からの離隔
+
+    #端横桁のパラメータ
+    D5 = 0.25
+    tf4 = 0.012
+    tw4 = 0.012
+    s_edge3 = 0.0 #端部における主桁からの離隔
+    s_middle3 = 0.0 #中間部における主桁からの離隔
+
+    #その他配置に関するパラメータ
+    s_BP = 0.4 #始点側端部から端横構までの離隔
+    s_EP = 0.4 #終点側端部から端横構までの離隔
+    L = 33.0 #支間長
+    interval_H = 5.5 #対傾構の配置間隔
+
+    Model = createGirder(
+    b1,
+    b2,
+    b3,
+    i1,
+    i2,
+    SH,
+    T1,
+    T2,
+    n,
+    Ss,
+    amount_V,
+    W,
+    D,
+    tw,
+    tf,
+    A,
+    B,
+    H,
+    t,
+    s,
+    s_in,
+    s_out,
+    location,
+    dz,
+    W2,
+    D3,
+    tf2,
+    tw2,
+    s_edge,
+    s_middle,
+    W3,
+    D4,
+    tf3,
+    tw3,
+    location2,
+    s_edge2,
+    s_middle2,
+    D5,
+    tf4,
+    tw4,
+    s_edge3,
+    s_middle3,
+    s_BP,
+    s_EP,
+    L,
+    interval_H
+    )
 
     fliePath = './data/Box.obj'
     pv.save_meshio(fliePath, Model)
@@ -36,12 +138,6 @@ def test_Obj():
     return exchangeIFC(vertices, faces)
 
 
-def test_createModel():
-    pv = pvObj()
-    Model = pv.CreateObj(T1=690, T2=1200, B1=4500, B2=4500, B3=500, i1=2, i2=2, L=100000)
-    return Model
-
-
 def exchangeIFC(vertices, faces):
     # ifcファイルを生成
     ifc = ifcProject()
@@ -52,18 +148,10 @@ def exchangeIFC(vertices, faces):
     Slab.add_Slab(vertices, faces, Floor1)
     return ifc.file
 
-def test_createBeam():
-    Model = Girder.CreateBeam(L=10.0,D=0.3,W=0.2,tf=0.012,tw=0.012,position=(0.0,0.0,0.0))
-    return Model
-
-def createSlab():
-    girder = Girder()
-    Model = girder.createSlab(H=1.0, T=0.5, b1=10.0, b2=10.0, b3=0.5, i1=0.01, i2=0.01, points=[[0.0,0.0,0.0],[15.0,20.0,1.50],[30.0,40.0,0.0]], R=100.0, detail=10.0)
-    return Model
 
 if __name__ == "__main__":
 
-    ifcFile = createSlab()
+    ifcFile = test_Obj()
     ifcFile.write("./data/sample_pyVista.ifc")
 
 
