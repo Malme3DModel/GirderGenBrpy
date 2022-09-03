@@ -1,8 +1,4 @@
-import pyvista as pv
-
-from src.comon.ifcProject import ifcProject
-from src.pvGirder import createGirder
-from src.ifcObj import ifcObj
+from src.ifcGirder import createIfcGirder
 
 # 合成桁の生成テスト
 def test_Obj():
@@ -67,7 +63,7 @@ def test_Obj():
     L = 33.0 #支間長
     interval_H = 5.5 #対傾構の配置間隔
 
-    Model = createGirder(
+    return createIfcGirder(
     b1,
     b2,
     b3,
@@ -115,42 +111,6 @@ def test_Obj():
     L,
     interval_H
     )
-
-    fliePath = './data/Box.obj'
-    pv.save_meshio(fliePath, Model.triangulate())
-
-    vertices = []
-    faces = []
-
-    for line in open(fliePath, "r"):
-        vals = line.split()
-
-        if len(vals) == 0:
-            continue
-
-        if vals[0] == "v":
-            v = list(map(float, vals[1:4]))
-            vertices.append(v)
-
-        if vals[0] == "f":
-            fvID = []
-            for f in vals[1:]:
-                w = f.split("/")
-                fvID.append(int(w[0])-1)
-            faces.append(fvID)
-
-    return exchangeIFC(vertices, faces)
-
-
-def exchangeIFC(vertices, faces):
-    # ifcファイルを生成
-    ifc = ifcProject()
-    # 階を生成
-    Floor1 = ifc.create_place("Floor 1")
-    Slab = ifcObj(ifc)
-
-    Slab.add_Slab(vertices, faces, Floor1)
-    return ifc.file
 
 
 if __name__ == "__main__":
