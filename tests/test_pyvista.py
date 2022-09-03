@@ -117,7 +117,7 @@ def test_Obj():
     )
 
     fliePath = './data/Box.obj'
-    pv.save_meshio(fliePath, Model)
+    pv.save_meshio(fliePath, Model.triangulate())
 
     vertices = []
     faces = []
@@ -157,12 +157,3 @@ if __name__ == "__main__":
 
     ifcFile = test_Obj()
     ifcFile.write("./data/sample_pyVista.ifc")
-
-
-    # # objファイルを作成
-    # Model = test_createModel()
-    # filename = './data/testGirder.obj'
-    # pv.save_meshio(filename, Model)
-
-    # mesh = pv.read(filename)
-    # mesh.plot(show_edges=True)
