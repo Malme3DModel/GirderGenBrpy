@@ -147,4 +147,4 @@ def createGirder(
 
     return Model
 
-Model.plot(cpos='xy', show_edges=True)
+# Model.plot(cpos='xy', show_edges=True)

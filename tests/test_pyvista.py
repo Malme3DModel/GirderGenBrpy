@@ -2,8 +2,9 @@ import pyvista as pv
 
 from src.comon.ifcProject import ifcProject
 from src.pvGirder import createGirder
+from src.ifcObj import ifcObj
 
-# スラブの生成テスト
+# 合成桁の生成テスト
 def test_Obj():
 
     #スラブのパラメータ
@@ -117,6 +118,9 @@ def test_Obj():
 
     fliePath = './data/Box.obj'
     pv.save_meshio(fliePath, Model)
+
+    vertices = []
+    faces = []
 
     for line in open(fliePath, "r"):
         vals = line.split()
