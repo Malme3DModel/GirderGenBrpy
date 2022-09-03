@@ -17,7 +17,8 @@ RUN conda install -c conda-forge pyvista
 RUN conda install -c conda-forge meshio
 
 # 自分のモジュールをコピー
-COPY app.py   ./
-COPY ./src   ./src
+COPY app.py ./
+COPY ./src  ./src
+RUN mkdir   ./tmp
 
-CMD ["app.handler"]  
+CMD ["app.handler"]

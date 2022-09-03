@@ -1,7 +1,7 @@
-from src.ifcGirder import createIfcGirder
+from src.pvGirder import createGirder
 
 # 合成桁の生成テスト
-def test_Ifc():
+def test_Obj():
 
     #スラブのパラメータ
     b1 = 4.25
@@ -63,7 +63,7 @@ def test_Ifc():
     L = 33.0 #支間長
     interval_H = 5.5 #対傾構の配置間隔
 
-    return createIfcGirder(
+    return createGirder(
     b1,
     b2,
     b3,
@@ -115,4 +115,5 @@ def test_Ifc():
 
 if __name__ == "__main__":
 
-    ifcStr = test_Ifc()
+    Model = test_Obj()
+    Model.plot(cpos='xy', show_edges=True)
