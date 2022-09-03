@@ -116,3 +116,4 @@ def test_Ifc():
 if __name__ == "__main__":
 
     ifcStr = test_Ifc()
+    print(ifcStr)

@@ -18,6 +18,7 @@ RUN conda install -c conda-forge meshio
 
 # 自分のモジュールをコピー
 COPY app.py ./
+COPY tests/test_ifcGirder.py ./
 COPY ./src  ./src
 RUN mkdir   ./tmp
 
