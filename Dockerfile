@@ -1,39 +1,14 @@
-FROM public.ecr.aws/lambda/python:3.9
+FROM public.ecr.aws/lambda/python:3.8
 
-RUN yum update -y
-RUN yum install wget -y
+RUN yum update && yum install -y wget && yum clean all
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && sh miniconda.sh -b -p /opt/miniconda
+COPY blog-test.yml /tmp/environment.yml
+RUN sed -i -r '/m2w64|vs2015|msys2|win|vc/d' /tmp/environment.yml
+RUN /opt/miniconda/bin/conda env create --file /tmp/environment.yml --prefix /opt/conda-env
+RUN /opt/conda-env/bin/pip install awslambdaric
+RUN mv /var/lang/bin/python3.8 /var/lang/bin/python3.8-orig && ln -sf /opt/conda-env/bin/python /var/lang/bin/python3.8
+COPY app.py /opt/my-code/app.py
 
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.9.2-Linux-x86_64.sh -O ~/Miniconda.sh
-RUN /bin/bash ~/Miniconda.sh -b -p ~/miniconda3
-RUN rm ~/Miniconda.sh
-RUN echo ". ~/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
-RUN echo "conda activate base" >> ~/.bashrc
-
-ENV PATH /root/miniconda3/bin:$PATH
-
-RUN yum install mesa-libGL-devel -y
-RUN conda install -c conda-forge ifcopenshell
-RUN conda install -c conda-forge pyvista
-RUN conda install -c conda-forge meshio
-# Install the function's dependencies
-RUN pip install awslambdaric
-
-# RUN chmod 644 $(find /root/miniconda3/bin -type f)
-# RUN chmod 755 $(find /root/miniconda3/bin -type d)
-
-# 自分のモジュールをコピー
-COPY app.py ./
-COPY ./src  ./src
-# RUN mkdir   ./tmp
-
-# テストコードもコピーしておいて
-COPY ./tests ./tests
-
-# entry point を miniconda に変更 /var/runtime/bootstrap が既存のpythonを指定しているので入れ替え
-COPY bootstrap /var/runtime/bootstrap
-COPY bootstrap.py /var/runtime/bootstrap.py
-# RUN chmod 755 /var/runtime/bootstrap
-# ENTRYPOINT [ "/lambda-entrypoint.sh" ]
-# ENTRYPOINT [ "/root/miniconda3/bin/python", "-m", "awslambdaric" ]
-
-CMD ["app.handler"]
+ENV PYTHONPATH "/var/lang/lib/python3.8/site-packages:/opt/my-code"
+ENTRYPOINT ["/lambda-entrypoint.sh"]
+CMD ["app.lambda_handler"]
