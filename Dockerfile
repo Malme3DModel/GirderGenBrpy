@@ -3,7 +3,9 @@ FROM public.ecr.aws/lambda/python:3.8
 RUN yum update -y
 RUN yum install wget -y
 # pyvista の実行に失敗する
-RUN yum install mesa-libGL-devel -y
+RUN yum install mesa-libGL-devel -y && \
+    mkdir -p /root/.local/share/pyvista/examples && \
+    chmod g+w /root/.local/share/pyvista/examples
 RUN yum clean all
 
 # RUN yum update && yum install -y wget && yum clean all
