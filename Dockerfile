@@ -1,4 +1,4 @@
-FROM public.ecr.aws/lambda/python:3.8
+FROM public.ecr.aws/lambda/python:3.9
 
 RUN yum update -y
 RUN yum install wget -y
@@ -22,12 +22,14 @@ RUN conda install -c conda-forge meshio
 # 自分のモジュールをコピー
 COPY app.py ./
 COPY ./src  ./src
-RUN mkdir   ./tmp
+# RUN mkdir   ./tmp
 
 # テストコードもコピーしておいて
 COPY ./tests ./tests
 
+# entry point を miniconda に変更 /var/runtime/bootstrap が既存のpythonを指定しているので入れ替え
 COPY bootstrap /var/runtime/bootstrap
+# RUN chmod 755 /var/runtime/bootstrap
 # ENTRYPOINT [ "/lambda-entrypoint.sh" ]
 # ENTRYPOINT [ "/root/miniconda3/bin/python", "-m", "awslambdaric" ]
 
