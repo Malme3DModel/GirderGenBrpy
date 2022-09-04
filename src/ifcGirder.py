@@ -102,7 +102,7 @@ def createIfcGirder(
     interval_H
     )
 
-    fliePath = '/tmp/Box.obj'
+    fliePath = './tmp/Box.obj'
     pv.save_meshio(fliePath, Model.triangulate())
 
     vertices = []
@@ -128,7 +128,7 @@ def createIfcGirder(
     ifcFile = exchangeIFC(vertices, faces)
 
     # ifc ファイルをテキストに変換する
-    fliePath = "/tmp/sample_pyVista.ifc"
+    fliePath = "./tmp/sample_pyVista.ifc"
     ifcFile.write(fliePath)
 
     f = open(fliePath, "r")

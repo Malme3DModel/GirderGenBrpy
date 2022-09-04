@@ -1,0 +1,9 @@
+name: conda-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - ifcopenshell
+  - pyvista
+  - meshio
+prefix: /opt/conda-env
