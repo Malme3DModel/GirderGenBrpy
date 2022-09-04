@@ -21,10 +21,12 @@ RUN mv /var/lang/bin/python3.8 /var/lang/bin/python3.8-orig
 # conda の環境を 既存のpython ファイルの場所に
 RUN ln -sf /opt/conda-env/bin/python /var/lang/bin/python3.8
 
-# 
+# 本プロジェクトのソースファイルをコピー
 COPY app.py /opt/my-code/app.py
 COPY ./src  /opt/my-code/src
 RUN mkdir   /opt/my-code/tmp
+# (仮)テストコードもコピーしておいて...
+COPY ./tests ./tests
 
 ENV PYTHONPATH "/var/lang/lib/python3.8/site-packages:/opt/my-code"
 
