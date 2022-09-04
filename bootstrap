@@ -5,7 +5,7 @@ export AWS_EXECUTION_ENV=AWS_Lambda_python3.9
 
 if [ -z "$AWS_LAMBDA_EXEC_WRAPPER" ]; then
   # exec /var/lang/bin/python3.8 /var/runtime/bootstrap.py
-  exec /root/miniconda3/bin/python3.9 /var/runtime/bootstrap.py
+  exec /root/miniconda3/bin/python /var/runtime/bootstrap.py
 else
   wrapper="$AWS_LAMBDA_EXEC_WRAPPER"
   if [ ! -f "$wrapper" ]; then
@@ -17,5 +17,5 @@ else
     exit 126
   fi
     # exec -- "$wrapper" /var/lang/bin/python3.8 /var/runtime/bootstrap.py
-    exec -- "$wrapper" /root/miniconda3/bin/python3.9 /var/runtime/bootstrap.py
+    exec -- "$wrapper" /root/miniconda3/bin/python /var/runtime/bootstrap.py
 fi

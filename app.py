@@ -1,6 +1,6 @@
 import json
 
-from tests.test_ifcGirder import test_Ifc
+# from tests.test_ifcGirder import test_Ifc
 
 def handler(event, context):
 
