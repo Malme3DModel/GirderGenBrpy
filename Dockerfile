@@ -27,7 +27,7 @@ COPY app.py /opt/my-code/app.py
 COPY ./src  /opt/my-code/src
 RUN mkdir   /opt/my-code/tmp && chmod g+w /opt/my-code/tmp
 # (仮)テストコードもコピーしておいて...
-COPY ./tests ./tests
+COPY ./tests /opt/my-code/tests
 
 ENV PYTHONPATH "/var/lang/lib/python3.8/site-packages:/opt/my-code"
 
