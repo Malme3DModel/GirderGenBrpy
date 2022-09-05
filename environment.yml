@@ -1,0 +1,12 @@
+name: conda-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8.10
+  - pip=21.1.2
+  - requests=2.25.1
+  - ifcopenshell=v0.7.0a4
+  - pyvista=0.36.1
+  - meshio=5.3.4
+prefix: /opt/conda-env
