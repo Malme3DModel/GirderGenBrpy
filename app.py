@@ -5,6 +5,11 @@ from src.ifcGirder import createIfcGirder
 
 def lambda_handler(event, context):
 
+    # GET
+    if not 'body' in event:
+        return "helloworld"
+
+    # POST
     palam = event['body']
     ifcStr = createIfcGirder(palam)
 
