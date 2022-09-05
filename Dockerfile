@@ -25,16 +25,11 @@ RUN ln -sf /opt/conda-env/bin/python /var/lang/bin/python3.8
 # 本プロジェクトのソースファイルをコピー
 COPY app.py /opt/my-code/app.py
 COPY ./src  /opt/my-code/src
-# (仮)テストコードもコピーしておいて...
-COPY ./tests /opt/my-code/tests
 
+# 環境変数をセットする
 ENV PYTHONPATH "/var/lang/lib/python3.8/site-packages:/opt/my-code"
 
 ENV PYVISTA_USERDATA_PATH "/tmp"
-
-# 実行してみる
-RUN python /opt/my-code/tests/test_ifcGirder.py
-
 
 ENTRYPOINT ["/lambda-entrypoint.sh"]
 

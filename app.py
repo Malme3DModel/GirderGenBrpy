@@ -1,12 +1,12 @@
 import json
 
-from tests.test_ifcGirder import test_Ifc
+# from tests.test_ifcGirder import test_Ifc
+from src.ifcGirder import createIfcGirder
 
 def lambda_handler(event, context):
 
-    print(f"lambda_handler calling, context: {context}")
-
-    ifcStr = test_Ifc()
+    palam = event['body']
+    ifcStr = createIfcGirder(palam)
 
     return {
         "statusCode": 200,
