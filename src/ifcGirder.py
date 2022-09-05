@@ -1,3 +1,4 @@
+import os
 import pyvista as pv
 
 from src.comon.ifcProject import ifcProject
@@ -102,7 +103,11 @@ def createIfcGirder(
     interval_H
     )
 
-    fliePath = './tmp/Box.obj'
+    fliePath = './tmp'
+    if 'PYVISTA_USERDATA_PATH' in os.environ:
+        fliePath = os.environ['PYVISTA_USERDATA_PATH']
+    fliePath += '/Box.obj'
+
     pv.save_meshio(fliePath, Model.triangulate())
 
     vertices = []
@@ -128,7 +133,11 @@ def createIfcGirder(
     ifcFile = exchangeIFC(vertices, faces)
 
     # ifc ファイルをテキストに変換する
-    fliePath = "./tmp/sample_pyVista.ifc"
+    fliePath = './tmp'
+    if 'PYVISTA_USERDATA_PATH' in os.environ:
+        fliePath = os.environ['PYVISTA_USERDATA_PATH']
+    fliePath += "/sample_pyVista.ifc"
+
     ifcFile.write(fliePath)
 
     f = open(fliePath, "r")

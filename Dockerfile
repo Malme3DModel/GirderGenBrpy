@@ -3,11 +3,7 @@ FROM public.ecr.aws/lambda/python:3.8
 RUN yum update -y
 RUN yum install wget -y
 # pyvista の実行に失敗する
-RUN yum install mesa-libGL-devel -y && \
-    mkdir -p /root/.local/share/pyvista/examples && \
-    chmod g+w /root/.local/share/pyvista/examples && \
-    chmod g+w /home/sbx_user1051 && \
-    chmod g+w /opt/conda-env/lib/python3.8/site-packages/pyvista/examples
+RUN yum install mesa-libGL-devel -y
 RUN yum clean all
 
 # RUN yum update && yum install -y wget && yum clean all
@@ -29,11 +25,16 @@ RUN ln -sf /opt/conda-env/bin/python /var/lang/bin/python3.8
 # 本プロジェクトのソースファイルをコピー
 COPY app.py /opt/my-code/app.py
 COPY ./src  /opt/my-code/src
-RUN mkdir   /opt/my-code/tmp && chmod g+w /opt/my-code/tmp
 # (仮)テストコードもコピーしておいて...
 COPY ./tests /opt/my-code/tests
 
 ENV PYTHONPATH "/var/lang/lib/python3.8/site-packages:/opt/my-code"
+
+ENV PYVISTA_USERDATA_PATH "/tmp"
+
+# 実行してみる
+RUN python /opt/my-code/tests/test_ifcGirder.py
+
 
 ENTRYPOINT ["/lambda-entrypoint.sh"]
 
