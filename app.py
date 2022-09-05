@@ -5,20 +5,22 @@ from src.ifcGirder import createIfcGirder
 
 def lambda_handler(event, context):
 
+    result = {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": '*',
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+        }
+    }
+
     # GET
     if not 'body' in event:
-        return "helloworld"
+        result["body"] = "helloworld"
+        return result
 
     # POST
     palam = event['body']
-    ifcStr = createIfcGirder(palam)
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(
-            {
-                "message": ifcStr,
-            }
-        ),
-    }
+    result["body"] = createIfcGirder(palam)
+    return result
 
