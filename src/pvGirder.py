@@ -8,8 +8,8 @@ from src.pvTranlate import Move
 import pyvista as pv
 
 #スラブのパラメータ
-b1 = 4.25
-b2 = 4.25
+b1 = 10.0
+b2 = 10.0
 b3 = 0.6
 i1 = 0.02
 i2 = 0.02
@@ -18,16 +18,16 @@ T1 = 0.2
 T2 = 0.35
 n = 3.0 #1:n
 Ss = 1.0 #端部から主桁中心までの離隔
-SB = b1 + b2 + b3
+SB = b1 + b2 + b3*2.0
 
 
 #主桁のパラメータ
-amount_V = 3.0 #主桁の本数
-interval_V = (SB-2*Ss)/(amount_V-1.0) #主桁の配置間隔
+amount_V = 10.0 #主桁の本数
 W = 1.70
 D = 0.31
 tw = 0.028
 tf = 0.024
+interval_V = (SB-2*Ss)/(amount_V-1.0) #主桁の配置間隔
 
 #中間対傾構のパラメータ
 A = 0.15
@@ -38,7 +38,7 @@ s = 0.1 #離隔
 D2 = interval_V / 2.0 - s
 s_in = 0.16
 s_out = 0.16
-location = [1,2,4,5] #中間対傾構を配置する列番号（起点側から0）
+
 dz = 0.30 #ウェブから対傾構までの離隔
 
 #横構のパラメータ
@@ -70,12 +70,21 @@ s_middle3 = 0.0 #中間部における主桁からの離隔
 #その他配置に関するパラメータ
 s_BP = 0.4 #始点側端部から端横構までの離隔
 s_EP = 0.4 #終点側端部から端横構までの離隔
-L = 33.0 #支間長
-L2 = L + (s_BP + s_EP)
-interval_H = 5.5 #対傾構の配置間隔
-amount_H = L / interval_H + 1.0
+L = 100.0 #支間長
+L2 = L + (s_BP + s_EP) #桁長
+amount_H = 10.0 #列数
+interval_H = L / (amount_H - 1.0)  #対傾構の配置間隔(主桁長？)
 z2 = tf * 2.0 + W + T2
 y2 = (s_BP + s_EP) / 2.0
+column = [] #中間対傾構を配置する列番号（起点側から0）
+for i in range(int(amount_H)):
+    column.append(i)
+column.append(amount_H)
+location = column
+for i in range(len(location2)):
+    location.remove(location2[i])
+del location[0]
+del location[len(location)-1]
 
 
 MainGirader = ArrayH1.Array(ArrayH1, L2, D, W, tf, tw, s_BP, s_EP, amount=amount_V, interval=interval_V)
@@ -92,7 +101,12 @@ Girder = Move.MoveObject(Move, obj=Girder_0, coordinate=(0.0, y2,-z2))
 point = [0.0,L/2.0,0.0]
 P1 = pv.PolyData(point)
 
-Girder += P1
 
-Model = Slab + Girder + P1
+
+
+Model = Slab + Girder
+
+
+#pv.save_meshio(filename='Girder.obj', mesh = Model)
+
 Model.plot(cpos='xy', show_edges=True)
