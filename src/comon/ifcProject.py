@@ -102,12 +102,12 @@ class ifcProject:
                                                           TimeUnit, ThermodynamicTemperatureUnit, LuminousIntensityUnit, PlaneAngleUnit])
 
         # Defining project and representation contexts
-        WorldCoordinateSystem = create_ifcaxis2placement(self.file)
+        WorldCoordinateSystem = create_ifcaxis2placement_world(self.file)
 
         self.context = self.file.createIfcGeometricRepresentationContext()
         self.context.ContextType = "Model"
         self.context.CoordinateSpaceDimension = 3
-        self.context.Precision = 1.e-05
+        self.context.Precision = 1.e-08
         self.context.WorldCoordinateSystem = WorldCoordinateSystem
 
         myProject = self.file.createIfcProject(create_guid())
@@ -118,7 +118,7 @@ class ifcProject:
 
         # Defining site, building and first story ------------
         site_placement = self.file.createIfcLocalPlacement()
-        site_placement.RelativePlacement = WorldCoordinateSystem
+        site_placement.RelativePlacement = create_ifcaxis2placement(self.file)
         mySite = self.file.createIfcSite( create_guid() )
         mySite.OwnerHistory = self.owner_hist
         mySite.Name = "My Site"
@@ -132,7 +132,7 @@ class ifcProject:
 
         building_placement = self.file.createIfcLocalPlacement()
         building_placement.PlacementRelTo = site_placement
-        building_placement.RelativePlacement = WorldCoordinateSystem
+        building_placement.RelativePlacement = create_ifcaxis2placement(self.file)
 
         self.myBuilding = self.file.createIfcBuilding( create_guid(), self.owner_hist )
         self.myBuilding.Name = "Test Building"
@@ -151,7 +151,7 @@ class ifcProject:
 
         self.floor1_placement = self.file.createIfcLocalPlacement()
         self.floor1_placement.PlacementRelTo = building_placement
-        self.floor1_placement.RelativePlacement = WorldCoordinateSystem
+        self.floor1_placement.RelativePlacement = create_ifcaxis2placement(self.file)
 
 
     def create_place(self, Name):

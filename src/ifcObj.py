@@ -43,7 +43,7 @@ class ifcObj():
         B1_Point =self.ifc.file.createIfcCartesianPoint ( position )
         B1_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B1_Point)
         B1_Axis2Placement.Axis = self.ifc.file.createIfcDirection(direction)
-        B1_Axis2Placement.RefDirection =self.ifc.file.createIfcDirection(Z)
+        B1_Axis2Placement.RefDirection =self.ifc.file.createIfcDirection(X)
 
         B1_Placement = self.ifc.file.createIfcLocalPlacement(Container.ObjectPlacement,B1_Axis2Placement)
         B1.ObjectPlacement=B1_Placement
@@ -70,5 +70,5 @@ class ifcObj():
 
         self.CreateObj(Floor, Name='Slab-B1',
                         vertices=vertices, faces=faces,
-                        position=(0.0,3.0,0.0), direction=(1.0,0.0,0.0))
+                        position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0))
 
