@@ -18,6 +18,11 @@ def create_ifcaxis2placement(ifcfile, point=O, dir1=Z, dir2=X):
     axis2placement = ifcfile.createIfcAxis2Placement3D(point, dir1, dir2)
     return axis2placement
 
+def create_ifcaxis2placement_world(ifcfile, point=O):
+    point = ifcfile.createIfcCartesianPoint(point)
+    axis2placement = ifcfile.createIfcAxis2Placement3D(point)
+    return axis2placement
+
 
 
 
