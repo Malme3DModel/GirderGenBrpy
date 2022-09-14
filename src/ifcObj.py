@@ -8,12 +8,12 @@ class ifcObj():
     def __init__(self, ifcProject: ifcProject):
         self.ifc = ifcProject
 
-    def CreateObj(self, Container, Name, vertices, faces, position, direction):
+    def CreateObj(self, Container, Name3, vertices, faces, position, direction):
 
         B1 = self.ifc.file.create_entity(
             "IfcBuildingElementProxy",
             GlobalId = ifcopenshell.guid.new(),
-            Name = Name
+            Name = Name3
         )
 
         ifc_faces = []
@@ -66,9 +66,9 @@ class ifcObj():
 
 
 
-    def add_Slab(self, vertices, faces, Floor):
+    def add_Obj(self, vertices, faces, Container, Name3):
 
-        self.CreateObj(Floor, Name='Slab-B1',
+        self.CreateObj(Container, Name3=Name3,
                         vertices=vertices, faces=faces,
                         position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0))
 

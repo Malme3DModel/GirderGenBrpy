@@ -6,7 +6,7 @@ from src.comon.comon import *
 
 class ifcProject:
 
-    def __init__(self):
+    def __init__(self, ProjectName, Name1):
 
         filename = 'output_rebar3.ifc'
         timestamp = time.time()
@@ -28,7 +28,7 @@ class ifcProject:
         app = self.file.createIfcApplication( )
         app.ApplicationDeveloper = org
         app.Version = "0.16.6700"
-        app.ApplicationFullName = "FreeCAD"
+        app.ApplicationFullName = "Brpy"
 
         person = self.file.createIfcPerson()
         person.FamilyName="Hirano"
@@ -112,7 +112,7 @@ class ifcProject:
 
         myProject = self.file.createIfcProject(create_guid())
         myProject.OwnerHistory = self.owner_hist
-        myProject.Name = "Test Girder"
+        myProject.Name = ProjectName
         myProject.RepresentationContexts = [self.context]
         myProject.UnitsInContext = UnitAssignment
 
@@ -135,7 +135,7 @@ class ifcProject:
         building_placement.RelativePlacement = create_ifcaxis2placement(self.file)
 
         self.myBuilding = self.file.createIfcBuilding( create_guid(), self.owner_hist )
-        self.myBuilding.Name = "Test Building"
+        self.myBuilding.Name = Name1
         self.myBuilding.ObjectPlacement = building_placement
         self.myBuilding.CompositionType="ELEMENT"
 

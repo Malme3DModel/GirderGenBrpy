@@ -71,11 +71,17 @@ def test_Ifc():
             'amount_H': 5.5 #対傾構の配置間隔
         }
     }
+    
+    ProjectName = 'プロジェクト名'
+    Name1 = '橋梁' # 階層1のオブジェクト分類名
+    Name2 = '上部構造' # 階層2のオブジェクト分類名
+    Name3 = '主桁' # 階層3のオブジェクト分類名
 
-    return createIfcGirder(palam)
+    return createIfcGirder(palam, ProjectName, Name1, Name2, Name3)
 
 
 if __name__ == "__main__":
 
     ifcStr = test_Ifc()
-    print(ifcStr)
+
+    ifcStr.write("sample_Girder01.ifc")
