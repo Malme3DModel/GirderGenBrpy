@@ -28,7 +28,7 @@ amount_H = length / interval_H + 1.0 #対傾構の数
 dz = 0.30
 
 
-#横げたを作成
+#横構を作成
 class ArrayH3:
     def CreateBeam(self, D, W, tf, tw, s_edge, s_middle, interval_H, interval_V, dz, reverse):
         L = math.sqrt((interval_H / 2.0)**2.0 + (interval_V)**2.0) - (s_edge + s_middle)
