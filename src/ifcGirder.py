@@ -1,11 +1,13 @@
 import os
 import pyvista as pv
+import ifcopenshell
+import ifcopenshell.api
 
 from src.comon.ifcProject import ifcProject
 from src.pvGirder import createGirder
 from src.ifcObj import ifcObj
 
-def createIfcGirder(plam):
+def createIfcGirder(plam, ProjectName, Name1, Name2, Name3):
 
     Model = createGirder(plam)
 
@@ -36,7 +38,7 @@ def createIfcGirder(plam):
                 fvID.append(int(w[0])-1)
             faces.append(fvID)
 
-    ifcFile = exchangeIFC(vertices, faces)
+    ifcFile = exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3)
 
     # ifc ファイルをテキストに変換する
     fliePath = './tmp'
@@ -47,18 +49,24 @@ def createIfcGirder(plam):
     ifcFile.write(fliePath)
 
     f = open(fliePath, "r")
-    data1 = f.read() 
+    data1 = f.read()
     f.close()
 
-    return data1
+    return ifcFile
 
 
-def exchangeIFC(vertices, faces):
+def exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3):
     # ifcファイルを生成
-    ifc = ifcProject()
-    # 階を生成
-    Floor1 = ifc.create_place("Floor 1")
-    Slab = ifcObj(ifc)
-
-    Slab.add_Slab(vertices, faces, Floor1)
+    # プロジェクト名と階層1のオブジェクト名を指定
+    ifc = ifcProject(ProjectName, Name1)
+    # モデル空間を作成
+    # 階層2のオブジェクト名を指定
+    Container = ifc.create_place(Name2)
+    Obj = ifcObj(ifc)
+    #モデルの追加
+    # 階層3のオブジェクト名を指定
+    Obj.add_Obj(vertices, faces, Container, Name3)
+    
+    pset = ifcopenshell.api.run("pset.add_pset", ifc, product=ifc, name="Property Set Name")
+    ifcopenshell.api.run("pset.edit_pset", ifc, pset=pset, properties={"ID": "固有のID番号", "オブジェクト分類名": Name3})
     return ifc.file

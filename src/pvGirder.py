@@ -107,9 +107,6 @@ def createGirder(plam):
     Girder_0 = MainGirader + IntermediateSwayBracing + CrossBeam01_T + CrossBeam01_D + CrossBeam02 + CrossBeam03
     Girder = Move.MoveObject(Move, obj=Girder_0, coordinate=(0.0, y2,-z2))
 
-    point = [0.0,L/2.0,0.0]
-    P1 = pv.PolyData(point)
-
     Model = Slab + Girder
 
     # Model.plot(cpos='xy', show_edges=True)
