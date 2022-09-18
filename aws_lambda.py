@@ -14,12 +14,12 @@ def lambda_handler(event, context):
         }
     }
 
-    # GET
+    # リクエストから「body」を取得
     if not 'body' in event:
-        result["body"] = "helloworld"
+        result["body"] = 'error! "palam" not found.'
         return result
 
-    # POST
+    # 3Dモデルを作成する
     palam = event['body']
     result["body"] = createIfcGirder(palam)
     return result

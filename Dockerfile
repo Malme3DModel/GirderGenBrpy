@@ -23,7 +23,7 @@ RUN rm /var/lang/bin/python3.8
 RUN ln -sf /opt/conda-env/bin/python /var/lang/bin/python3.8
 
 # 本プロジェクトのソースファイルをコピー
-COPY app.py /opt/my-code/app.py
+COPY aws_lambda.py /opt/my-code/app.py
 COPY ./src  /opt/my-code/src
 
 # 環境変数をセットする

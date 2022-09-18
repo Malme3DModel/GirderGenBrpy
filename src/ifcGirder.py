@@ -7,7 +7,7 @@ from src.comon.ifcProject import ifcProject
 from src.pvGirder import createGirder
 from src.ifcObj import ifcObj
 
-def createIfcGirder(plam, ProjectName, Name1, Name2, Name3):
+def createIfcGirder(plam, ProjectName='', Name1='', Name2='', Name3=''):
 
     Model = createGirder(plam)
 
