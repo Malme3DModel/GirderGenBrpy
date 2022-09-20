@@ -1,27 +1,25 @@
 import os
-import pyvista as pv
-import ifcopenshell
-import ifcopenshell.api
-
 from src.comon.ifcProject import ifcProject
-from src.pvGirder import createGirder
 from src.ifcObj import ifcObj
 
-def createIfcGirder(plam, ProjectName='', Name1='', Name2='', Name3=''):
+def createIfcGirder(body):
 
-    Model = createGirder(plam)
+    # 送られた引数から値を取り出す
+    ProjectName = body['ProjectName'] if 'ProjectName' in body else 'sample Project'
+    Name1 = body['Name1'] if 'Name1' in body else 'sample Name1'
+    Name2 = body['Name2'] if 'Name2' in body else 'sample Name2'
+    Name3 = body['Name3'] if 'Name3' in body else 'sample Name3'
+    ## obj ファイル情報を抽出
+    if not 'obj' in body:
+        raise 'obj not found'
+    strObj = body['obj']
 
-    fliePath = './tmp'
-    if 'PYVISTA_USERDATA_PATH' in os.environ:
-        fliePath = os.environ['PYVISTA_USERDATA_PATH']
-    fliePath += '/Box.obj'
-
-    pv.save_meshio(fliePath, Model.triangulate())
-
+    # obj ファイルを読む
     vertices = []
     faces = []
 
-    for line in open(fliePath, "r"):
+    rows = strObj.split('\n')
+    for line in rows:
         vals = line.split()
 
         if len(vals) == 0:
@@ -38,6 +36,7 @@ def createIfcGirder(plam, ProjectName='', Name1='', Name2='', Name3=''):
                 fvID.append(int(w[0])-1)
             faces.append(fvID)
 
+    # obj ファイルを ifc に変換
     ifcFile = exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3)
 
     # ifc ファイルをテキストに変換する
@@ -52,7 +51,7 @@ def createIfcGirder(plam, ProjectName='', Name1='', Name2='', Name3=''):
     data1 = f.read()
     f.close()
 
-    return ifcFile
+    return data1
 
 
 def exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3):
@@ -67,6 +66,4 @@ def exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3):
     # 階層3のオブジェクト名を指定
     Obj.add_Obj(vertices, faces, Container, Name3)
     
-    pset = ifcopenshell.api.run("pset.add_pset", ifc, product=ifc, name="Property Set Name")
-    ifcopenshell.api.run("pset.edit_pset", ifc, pset=pset, properties={"ID": "固有のID番号", "オブジェクト分類名": Name3})
     return ifc.file
