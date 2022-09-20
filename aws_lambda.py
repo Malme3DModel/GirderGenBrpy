@@ -5,22 +5,24 @@ from src.ifcGirder import createIfcGirder
 
 def lambda_handler(event, context):
 
-    result = {
-        "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Origin": '*',
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-        }
+    headers = {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST',
+        'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, Content-Encoding',
+        'Access-Control-Max-Age': '3600'
     }
 
-    # リクエストから「body」を取得
-    if not 'body' in event:
-        result["body"] = 'error! "palam" not found.'
-        return result
-
     # 3Dモデルを作成する
-    palam = event['body']
-    result["body"] = createIfcGirder(palam)
-    return result
+    try:
+        from src.ifcGirder import createIfcGirder
+
+        body = event['body']
+        ifcGirder = createIfcGirder(body)
+
+        return (json.dumps({ 'body': ifcGirder}), 200, headers)
+
+    except:
+        import traceback
+        traceback.print_exc()
+        return (json.dumps({ 'body': traceback.print_exc()}), 500, headers)
 
