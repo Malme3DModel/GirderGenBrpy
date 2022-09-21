@@ -1,6 +1,6 @@
 import os
 from src.comon.ifcProject import ifcProject
-from src.ifcObj import ifcObj
+from src.comon.ifcObj import ifcObj
 
 def createIfcGirder(body):
 
