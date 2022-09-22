@@ -151,7 +151,6 @@ class ifcProject:
         property_set = self.file.createIfcPropertySet(self.myBuilding.GlobalId, self.owner_hist, "基本情報", None, property_values)
         self.file.createIfcRelDefinesByProperties(self.myBuilding.GlobalId, self.owner_hist, None, None, [self.myBuilding], property_set)
         
-
         container_site = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
         container_site.Name = "Site Container"
         container_site.RelatingObject = mySite
@@ -171,7 +170,7 @@ class ifcProject:
 
         floor1 = self.file.createIfcBuildingStorey( create_guid(), self.owner_hist, Name, None, None, self.myBuilding, None, None, "ELEMENT", 0.0)
         floor1.ObjectPlacement = self.floor1_placement
-
+        
         # プロパティ付けてみた
         ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
         property_values = [
