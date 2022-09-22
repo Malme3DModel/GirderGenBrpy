@@ -64,6 +64,16 @@ class ifcObj():
         Flr1_Container.RelatedElements=[B1]
         Flr1_Container.RelatingStructure= Container
 
+        # プロパティ付けてみた
+        ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
+        property_values = [
+            self.ifc.file.createIfcPropertySingleValue("ID", None, self.ifc.file.create_entity("IfcText", "1"), None),
+            self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", "床版"), None),
+            self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", "A1-A2"), None),
+            self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", "PC床版"), None),
+        ]
+        property_set = self.ifc.file.createIfcPropertySet(B1.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
+        self.ifc.file.createIfcRelDefinesByProperties(B1.GlobalId, self.ifc.owner_hist, None, None, [B1], property_set)
 
 
     def add_Obj(self, vertices, faces, Container, Name3):

@@ -75,7 +75,7 @@ def test_Ifc():
     ProjectName = 'プロジェクト名'
     Name1 = '橋梁' # 階層1のオブジェクト分類名
     Name2 = '上部構造' # 階層2のオブジェクト分類名
-    Name3 = '主桁' # 階層3のオブジェクト分類名
+    Name3 = '床版' # 階層3のオブジェクト分類名
 
     return createIfcGirder(palam, ProjectName, Name1, Name2, Name3)
 

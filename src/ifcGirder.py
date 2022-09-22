@@ -66,7 +66,5 @@ def exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3):
     #モデルの追加
     # 階層3のオブジェクト名を指定
     Obj.add_Obj(vertices, faces, Container, Name3)
-    
-    pset = ifcopenshell.api.run("pset.add_pset", ifc, product=ifc, name="Property Set Name")
-    ifcopenshell.api.run("pset.edit_pset", ifc, pset=pset, properties={"ID": "固有のID番号", "オブジェクト分類名": Name3})
+
     return ifc.file
