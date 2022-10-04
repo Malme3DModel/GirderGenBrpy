@@ -8,7 +8,7 @@ class ifcObj():
     def __init__(self, ifcProject: ifcProject):
         self.ifc = ifcProject
 
-    def CreateObj(self, Container, Name3, vertices, faces, position, direction):
+    def CreateObj(self, Container, Name3, vertices, faces, position, direction, ID, Class, Info, Type):
 
         B1 = self.ifc.file.create_entity(
             "IfcBuildingElementProxy",
@@ -67,18 +67,17 @@ class ifcObj():
         # プロパティ付けてみた
         ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
         property_values = [
-            self.ifc.file.createIfcPropertySingleValue("ID", None, self.ifc.file.create_entity("IfcText", "1"), None),
-            self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", "床版"), None),
-            self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", "A1-A2"), None),
-            self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", "PC床版"), None),
+            self.ifc.file.createIfcPropertySingleValue("ID", None, self.ifc.file.create_entity("IfcText", ID), None),
+            self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", Class), None),
+            self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", Info), None),
+            self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", Type), None),
         ]
         property_set = self.ifc.file.createIfcPropertySet(B1.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
         self.ifc.file.createIfcRelDefinesByProperties(B1.GlobalId, self.ifc.owner_hist, None, None, [B1], property_set)
 
 
-    def add_Obj(self, vertices, faces, Container, Name3):
+    def add_Obj(self, vertices, faces, Container, Name3, ID, Class, Info, Type):
 
-        self.CreateObj(Container, Name3=Name3,
+        self.CreateObj(Container=Container, Name3=Name3,
                         vertices=vertices, faces=faces,
-                        position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0))
-
+                        position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0), ID=ID, Class=Class, Info=Info, Type=Type)
