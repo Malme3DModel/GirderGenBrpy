@@ -2,43 +2,87 @@ import os
 from src.comon.ifcProject import ifcProject
 from src.comon.ifcObj import ifcObj
 
-def createIfcGirder(body):
-
-    # 送られた引数から値を取り出す
-    ProjectName = body['ProjectName'] if 'ProjectName' in body else 'sample Project'
-    Name1 = body['Name1'] if 'Name1' in body else 'sample Name1'
-    Name2 = body['Name2'] if 'Name2' in body else 'sample Name2'
-    Name3 = body['Name3'] if 'Name3' in body else 'sample Name3'
+def createObject(obj):
     ## obj ファイル情報を抽出
-    if not 'obj' in body:
+    if not 'obj' in obj:
         raise 'obj not found'
-    strObj = body['obj']
+    strObj = obj['obj']
 
     # obj ファイルを読む
     vertices = []
     faces = []
 
-    rows = strObj.split('\n')
-    for line in rows:
-        vals = line.split()
+    for i in range(len(strObj)):
+        v_list = []
+        f_list = []
+        rows = strObj[i].split('\n')
+        for line in rows:
+            vals = line.split()
 
-        if len(vals) == 0:
-            continue
+            if len(vals) == 0:
+                continue
 
-        if vals[0] == "v":
-            v = list(map(float, vals[1:4]))
-            vertices.append(v)
+            if vals[0] == "v":
+                v = list(map(float, vals[1:4]))
+                v_list.append(v)
 
-        if vals[0] == "f":
-            fvID = []
-            for f in vals[1:]:
-                w = f.split("/")
-                fvID.append(int(w[0])-1)
-            faces.append(fvID)
+            if vals[0] == "f":
+                fvID = []
+                for f in vals[1:]:
+                    w = f.split("/")
+                    fvID.append(int(w[0])-1)
+                f_list.append(fvID)
+
+        vertices.append(v_list)
+        faces.append(f_list)
+    return vertices, faces
+
+def createIfcGirder(body):
+    # 送られた引数から値を取り出す
+    ProjectName = body['ProjectName']
+    beam = body['beam']
+    v_beam ,f_beam = createObject(beam)
+    mid_l = body['mid_l']
+    v_mid_l ,f_mid_l = createObject(mid_l)
+    mid_u = body['mid_u']
+    v_mid_u ,f_mid_u = createObject(mid_u)
+    endbeam = body['endbeam']
+    v_endbeam ,f_endbeam = createObject(endbeam)
+    crossbeam = body['crossbeam']
+    v_crossbeam ,f_crossbeam = createObject(crossbeam)
 
     # obj ファイルを ifc に変換
-    ifcFile = exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3)
+    # ifcファイルを生成
+    # プロジェクト名と階層1のオブジェクト名を指定
+    ifc = ifcProject(ProjectName, "橋梁")
+    # モデル空間を作成
+    # 階層2のオブジェクト名を指定
+    Container = ifc.create_place("上部構造")
+    Obj = ifcObj(ifc)
+    #モデルの追加
+    # 階層3のオブジェクト名を指定
+    for i in range(len(v_beam)):
+        Info = '主桁{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_beam[i], faces=f_beam[i], Container=Container, Name3="主桁", ID=str(i), Class='主桁', Info=Info, Type='鋼橋鈑桁')
 
+    ID_mid = 0
+    for i in range(len(v_mid_u)):
+        Info_l = '下横構{:0=2}'.format(i+1)
+        Info_u = '上横構{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_mid_l[i], faces=f_mid_l[i], Container=Container, Name3="横構", ID=str(ID_mid), Class='下横構', Info=Info_l, Type='')
+        Obj.add_Obj(vertices=v_mid_u[i], faces=f_mid_u[i], Container=Container, Name3="横構", ID=str(ID_mid+1), Class='上横構', Info=Info_u, Type='')
+        ID_mid += 2
+
+    for i in range(len(v_endbeam)):
+        Info = '端横桁{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_endbeam[i], faces=f_endbeam[i], Container=Container, Name3="端横桁", ID=str(i), Class='端横桁', Info=Info, Type='')
+
+    for i in range(len(v_endbeam)):
+        Info = '端横桁{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_endbeam[i], faces=f_endbeam[i], Container=Container, Name3="端横桁", ID=str(i), Class='端横桁', Info=Info, Type='')
+
+
+    ifcFile = ifc.file
     # ifc ファイルをテキストに変換する
     fliePath = './tmp'
     if 'PYVISTA_USERDATA_PATH' in os.environ:
@@ -52,18 +96,3 @@ def createIfcGirder(body):
     f.close()
 
     return data1
-
-
-def exchangeIFC(vertices, faces, ProjectName, Name1, Name2, Name3):
-    # ifcファイルを生成
-    # プロジェクト名と階層1のオブジェクト名を指定
-    ifc = ifcProject(ProjectName, Name1)
-    # モデル空間を作成
-    # 階層2のオブジェクト名を指定
-    Container = ifc.create_place(Name2)
-    Obj = ifcObj(ifc)
-    #モデルの追加
-    # 階層3のオブジェクト名を指定
-    Obj.add_Obj(vertices, faces, Container, Name3)
-    
-    return ifc.file
