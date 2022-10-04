@@ -46,17 +46,14 @@ class ifcProject:
 
         LengthUnit = self.file.createIfcSIUnit()
         LengthUnit.UnitType = "LENGTHUNIT"
-        LengthUnit.Prefix = "MILLI"
         LengthUnit.Name="METRE"
 
         AreaUnit = self.file.createIfcSIUnit()
         AreaUnit.UnitType = "AREAUNIT"
-        AreaUnit.Prefix = "MILLI"
         AreaUnit.Name="SQUARE_METRE"
 
         VolumeUnit = self.file.createIfcSIUnit()
         VolumeUnit.UnitType = "VOLUMEUNIT"
-        VolumeUnit.Prefix = "MILLI"
         VolumeUnit.Name="CUBIC_METRE"
 
         SolidAngleUnit = self.file.createIfcSIUnit()
@@ -138,7 +135,22 @@ class ifcProject:
         self.myBuilding.Name = Name1
         self.myBuilding.ObjectPlacement = building_placement
         self.myBuilding.CompositionType="ELEMENT"
-
+        
+        # 階層１の属性情報を付与
+        ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
+        property_values = [
+            self.file.createIfcPropertySingleValue("ID", None, self.file.create_entity("IfcText", "1"), None),
+            self.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.file.create_entity("IfcText", "橋梁"), None),
+            self.file.createIfcPropertySingleValue("判別情報1（路線名）", None, self.file.create_entity("IfcText", "国道〇〇号〇〇線"), None),
+            self.file.createIfcPropertySingleValue("判別情報2（道路種別）", None, self.file.create_entity("IfcText", "本線"), None),
+            self.file.createIfcPropertySingleValue("判別情報3-1（開始距離標）", None, self.file.create_entity("IfcText", "〇〇km"), None),
+            self.file.createIfcPropertySingleValue("判別情報3-2（終了距離標）", None, self.file.create_entity("IfcText", "〇〇km"), None),
+            self.file.createIfcPropertySingleValue("判別情報3-3（開始測点番号）", None, self.file.create_entity("IfcText", "NO.〇〇"), None),
+            self.file.createIfcPropertySingleValue("判別情報3-4（終了測点番号）", None, self.file.create_entity("IfcText", "NO.〇〇"), None),
+        ]
+        property_set = self.file.createIfcPropertySet(self.myBuilding.GlobalId, self.owner_hist, "基本情報", None, property_values)
+        self.file.createIfcRelDefinesByProperties(self.myBuilding.GlobalId, self.owner_hist, None, None, [self.myBuilding], property_set)
+        
         container_site = self.file.createIfcRelAggregates(create_guid() , self.owner_hist)
         container_site.Name = "Site Container"
         container_site.RelatingObject = mySite
@@ -158,13 +170,16 @@ class ifcProject:
 
         floor1 = self.file.createIfcBuildingStorey( create_guid(), self.owner_hist, Name, None, None, self.myBuilding, None, None, "ELEMENT", 0.0)
         floor1.ObjectPlacement = self.floor1_placement
-
+        
         # プロパティ付けてみた
         ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
         property_values = [
-            self.file.createIfcPropertySingleValue("Some Property Set Name ", "Some Property  Name", self.file.create_entity("IfcText", "Some Value"), None),
+            self.file.createIfcPropertySingleValue("ID", None, self.file.create_entity("IfcText", "1"), None),
+            self.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.file.create_entity("IfcText", "上部構造"), None),
+            self.file.createIfcPropertySingleValue("判別情報", None, self.file.create_entity("IfcText", "第1連"), None),
+            self.file.createIfcPropertySingleValue("種類・形式", None, self.file.create_entity("IfcText", "単径間鋼鈑桁橋"), None),
         ]
-        property_set = self.file.createIfcPropertySet(floor1.GlobalId, self.owner_hist, "Some Property Set Name ", None, property_values)
+        property_set = self.file.createIfcPropertySet(floor1.GlobalId, self.owner_hist, "基本情報", None, property_values)
         self.file.createIfcRelDefinesByProperties(floor1.GlobalId, self.owner_hist, None, None, [floor1], property_set)
         ##
 
