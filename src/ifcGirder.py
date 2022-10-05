@@ -1,4 +1,5 @@
 import os
+from src.comon.comon import *
 from src.comon.ifcProject import ifcProject
 from src.comon.ifcObj import ifcObj
 
@@ -59,6 +60,20 @@ def createIfcGirder(body):
     # 階層2のオブジェクト名を指定
     Container = ifc.create_place("上部構造")
     Obj = ifcObj(ifc)
+        # 主桁を格納する場所を追加
+    import ifcopenshell
+    B0 = ifc.file.create_entity(
+        "IfcBuildingElementProxy",
+        GlobalId = create_guid(),
+        Name = "主桁を格納する場所"
+    )
+    B0_Placement = ifc.file.createIfcLocalPlacement(Container.ObjectPlacement)
+    B0.ObjectPlacement=B0_Placement
+
+    Flr1_Container = ifc.file.createIfcRelContainedInSpatialStructure(create_guid(), ifc.owner_hist)
+    Flr1_Container.RelatedElements=[B0]
+    Flr1_Container.RelatingStructure= Container
+
     #モデルの追加
     # 階層3のオブジェクト名を指定
     for i in range(len(v_beam)):
