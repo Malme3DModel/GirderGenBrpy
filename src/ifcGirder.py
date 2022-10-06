@@ -50,22 +50,75 @@ def createIfcGirder(body):
     endbeam = body['endbeam']
     v_endbeam ,f_endbeam = createObject(endbeam)
     crossbeam = body['crossbeam']
+    v_crossbeam ,f_crossbeam = createObject(crossbeam)
+    cross_L = body['cross_L']
+    v_cross_L ,f_cross_L = createObject(cross_L)
+    cross_R = body['cross_R']
+    v_cross_R ,f_cross_R = createObject(cross_R)
+    cross_T = body['cross_T']
+    v_cross_T ,f_cross_T = createObject(cross_T)
+    cross_D = body['cross_D']
+    v_cross_D ,f_cross_D = createObject(cross_D)
 
     # obj ファイルを ifc に変換
     # ifcファイルを生成
-    # プロジェクト名と階層1のオブジェクト名を指定
+    # 階層1を作成
     ifc = ifcProject(ProjectName, "橋梁")
     # モデル空間を作成
-    # 階層2のオブジェクト名を指定
+    # 階層2を作成
     Container = ifc.create_place(Name="上部構造", ID="1", Class='上部構造', Info='', Type="単径間鋼橋鈑桁")
     Obj = ifcObj(ifc)
-        # 主桁を格納する場所を追加
+    # 階層3を作成
     beamBox = Obj.CreateBox(Container=Container, Name='主桁',ID="1", Class='主桁', Info='', Type="鋼橋鈑桁")
-    #モデルの追加
-    # 階層3のオブジェクト名を指定
+    midBox = Obj.CreateBox(Container=Container, Name='横構',ID="1", Class='横構', Info='', Type="鋼橋鈑桁")
+    crossBox = Obj.CreateBox(Container=Container, Name='対傾構',ID="1", Class='対傾構', Info='', Type="鋼橋鈑桁")
+    crossbeamBox = Obj.CreateBox(Container=Container, Name='横桁',ID="1", Class='横桁', Info='', Type="鋼橋鈑桁")
+    # 階層3にモデルを追加
     for i in range(len(v_beam)):
-        Name = '主桁{:0=2}'.format(i+1)
-        Obj.add_Obj(vertices=v_beam[i], faces=f_beam[i], Container=beamBox, Name3=Name, ID=str(i+1), Class=Name, Info='', Type='鋼橋鈑桁')
+        Name_b = '主桁{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_beam[i], faces=f_beam[i], Container=beamBox, Name3=Name_b, ID=str(i+1), Class=Name_b, Info='', Type='')
+
+    ID=0
+    for i in range(len(v_mid_u)):
+        Name_u = '上横構{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_mid_u[i], faces=f_mid_u[i], Container=midBox, Name3=Name_u, ID=str(ID+1), Class=Name_u, Info='', Type='')
+        ID += 1
+    for i in range(len(v_mid_l)):
+        Name_l = '下横構{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_mid_l[i], faces=f_mid_l[i], Container=midBox, Name3=Name_l, ID=str(ID+1), Class=Name_l, Info='', Type='')
+        ID += 1
+
+    ID=0
+    for i in range(int(len(v_endbeam)/2)):
+        Name_e = '端横桁01-{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_endbeam[i], faces=f_endbeam[i], Container=crossbeamBox, Name3="端横桁01", ID=str(ID+1), Class=Name_e, Info='', Type='')
+        ID += 1
+    for i in range(int(len(v_endbeam)/2)):
+        Name_e = '端横桁02-{:0=2}'.format(i+1)
+        n = int(len(v_endbeam)/2)
+        Obj.add_Obj(vertices=v_endbeam[n], faces=f_endbeam[n], Container=crossbeamBox, Name3="端横桁02", ID=str(ID+1), Class=Name_e, Info='', Type='')
+        ID += 1
+
+    ID = 0
+    for i in range(int(len(v_crossbeam)/len(v_endbeam))):
+        Name_c = '荷重分配横桁{:0=2}'.format(i+1)
+        for j in range(len(v_endbeam)):
+            Name_cc = Name_c + '-{:0=2}'.format(j+1)
+            Obj.add_Obj(vertices=v_crossbeam[j*(i+1)], faces=f_crossbeam[j*(i+1)], Container=crossbeamBox, Name3=Name_c, ID=str(ID+1), Class=Name_cc, Info='', Type='')
+            ID += 1
+
+    ID = 0
+    for i in range(len(v_cross_L)):
+        Name_r = '対傾構{:0=2}'.format(i+1)
+        Name_rl = '左斜材{:0=2}'.format(i+1)
+        Name_rr = '右斜材{:0=2}'.format(i+1)
+        Name_rt = '上弦材{:0=2}'.format(i+1)
+        Name_rd = '下弦材{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_cross_L[i], faces=f_cross_L[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rl, Info='', Type='')
+        Obj.add_Obj(vertices=v_cross_R[i], faces=f_cross_R[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rr, Info='', Type='')
+        Obj.add_Obj(vertices=v_cross_T[i], faces=f_cross_T[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rt, Info='', Type='')
+        Obj.add_Obj(vertices=v_cross_D[i], faces=f_cross_D[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rd, Info='', Type='')
+        ID += 1
 
     ifcFile = ifc.file
     # ifc ファイルをテキストに変換する
