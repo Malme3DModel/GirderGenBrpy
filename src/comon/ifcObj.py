@@ -60,9 +60,9 @@ class ifcObj():
         B1_DefShape.Representations=[B1_Repr]
         B1.Representation=B1_DefShape
 
-        Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(create_guid(), self.ifc.owner_hist)
-        Flr1_Container.RelatedElements=[B1]
-        Flr1_Container.RelatingStructure= Container
+        Flr1_Container = self.ifc.file.create_entity("IfcRelAggregates", GlobalId = create_guid(), OwnerHistory=self.ifc.owner_hist)
+        Flr1_Container.RelatedObjects=[B1]
+        Flr1_Container.RelatingObject= Container
 
         # プロパティ付けてみた
         ## https://community.osarch.org/discussion/711/ifcopenshell-how-to-add-a-new-property-and-value-to-an-object
@@ -74,10 +74,40 @@ class ifcObj():
         ]
         property_set = self.ifc.file.createIfcPropertySet(B1.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
         self.ifc.file.createIfcRelDefinesByProperties(B1.GlobalId, self.ifc.owner_hist, None, None, [B1], property_set)
+        return B1
+
+    def CreateBox(self, Container, Name, ID, Class, Info, Type):
+        B0 = self.ifc.file.create_entity(
+        "IfcBuildingElementProxy",
+        GlobalId = create_guid(),
+        Name = Name
+    )
+        
+        B0_Point =self.ifc.file.createIfcCartesianPoint ((0.0,0.0,0.0))
+        B0_Axis2Placement = self.ifc.file.createIfcAxis2Placement3D(B0_Point)
+        B0_Axis2Placement.Axis = self.ifc.file.createIfcDirection((0.0,0.0,1.0))
+        B0_Axis2Placement.RefDirection =self.ifc.file.createIfcDirection(X)
+        B0_Placement = self.ifc.file.createIfcLocalPlacement(Container.ObjectPlacement,B0_Axis2Placement)
+        B0.ObjectPlacement=B0_Placement
+        
+        Flr1_Container = self.ifc.file.createIfcRelContainedInSpatialStructure(create_guid(), self.ifc.owner_hist)
+        Flr1_Container.RelatedElements=[B0]
+        Flr1_Container.RelatingStructure= Container
+        
+        property_values = [
+            self.ifc.file.createIfcPropertySingleValue("ID", None, self.ifc.file.create_entity("IfcText", ID), None),
+            self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", Class), None),
+            self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", Info), None),
+            self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", Type), None),
+        ]
+        property_set = self.ifc.file.createIfcPropertySet(B0.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
+        self.ifc.file.createIfcRelDefinesByProperties(B0.GlobalId, self.ifc.owner_hist, None, None, [B0], property_set)
+        return B0
 
 
     def add_Obj(self, vertices, faces, Container, Name3, ID, Class, Info, Type):
 
-        self.CreateObj(Container=Container, Name3=Name3,
+        Obj = self.CreateObj(Container=Container, Name3=Name3,
                         vertices=vertices, faces=faces,
                         position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0), ID=ID, Class=Class, Info=Info, Type=Type)
+        return Obj
