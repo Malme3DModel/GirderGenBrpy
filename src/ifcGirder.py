@@ -41,6 +41,8 @@ def createObject(obj):
 def createIfcGirder(body):
     # 送られた引数から値を取り出す
     ProjectName = body['ProjectName']
+    slab = body['slab']
+    v_slab ,f_slab = createObject(slab)
     beam = body['beam']
     v_beam ,f_beam = createObject(beam)
     mid_l = body['mid_l']
@@ -69,11 +71,16 @@ def createIfcGirder(body):
     Container = ifc.create_place(Name="上部構造", ID="1", Class='上部構造', Info='', Type="単径間鋼橋鈑桁")
     Obj = ifcObj(ifc)
     # 階層3を作成
-    beamBox = Obj.CreateBox(Container=Container, Name='主桁',ID="1", Class='主桁', Info='', Type="鋼橋鈑桁")
-    midBox = Obj.CreateBox(Container=Container, Name='横構',ID="1", Class='横構', Info='', Type="鋼橋鈑桁")
-    crossBox = Obj.CreateBox(Container=Container, Name='対傾構',ID="1", Class='対傾構', Info='', Type="鋼橋鈑桁")
-    crossbeamBox = Obj.CreateBox(Container=Container, Name='横桁',ID="1", Class='横桁', Info='', Type="鋼橋鈑桁")
+    slabBox = Obj.CreateBox(Container=Container, Name='スラブ',ID="1", Class='スラブ', Info='', Type="RC床版")
+    beamBox = Obj.CreateBox(Container=Container, Name='主桁',ID="2", Class='主桁', Info='', Type="鋼橋鈑桁")
+    midBox = Obj.CreateBox(Container=Container, Name='横構',ID="3", Class='横構', Info='', Type="鋼橋鈑桁")
+    crossBox = Obj.CreateBox(Container=Container, Name='対傾構',ID="4", Class='対傾構', Info='', Type="鋼橋鈑桁")
+    crossbeamBox = Obj.CreateBox(Container=Container, Name='横桁',ID="5", Class='横桁', Info='', Type="鋼橋鈑桁")
     # 階層3にモデルを追加
+    for i in range(len(v_slab)):
+        Name_s = 'スラブ{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_slab[i], faces=f_slab[i], Container=slabBox, Name3=Name_s, ID=str(i+1), Class=Name_s, Info='', Type='')
+    
     for i in range(len(v_beam)):
         Name_b = '主桁{:0=2}'.format(i+1)
         Obj.add_Obj(vertices=v_beam[i], faces=f_beam[i], Container=beamBox, Name3=Name_b, ID=str(i+1), Class=Name_b, Info='', Type='')
@@ -93,10 +100,11 @@ def createIfcGirder(body):
         Name_e = '端横桁01-{:0=2}'.format(i+1)
         Obj.add_Obj(vertices=v_endbeam[i], faces=f_endbeam[i], Container=crossbeamBox, Name3="端横桁01", ID=str(ID+1), Class=Name_e, Info='', Type='')
         ID += 1
+    n = int(len(v_endbeam)/2)
     for i in range(int(len(v_endbeam)/2)):
         Name_e = '端横桁02-{:0=2}'.format(i+1)
-        n = int(len(v_endbeam)/2)
         Obj.add_Obj(vertices=v_endbeam[n], faces=f_endbeam[n], Container=crossbeamBox, Name3="端横桁02", ID=str(ID+1), Class=Name_e, Info='', Type='')
+        n += 1
         ID += 1
 
     ID = 0
