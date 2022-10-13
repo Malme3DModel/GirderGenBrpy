@@ -61,11 +61,24 @@ def createIfcGirder(body):
     v_cross_T ,f_cross_T = createObject(cross_T)
     cross_D = body['cross_D']
     v_cross_D ,f_cross_D = createObject(cross_D)
+    gusset01 = body['gusset01']
+    v_gusset01 ,f_gusset01 = createObject(gusset01)
+    gusset02 = body['gusset02']
+    v_gusset02 ,f_gusset02 = createObject(gusset02)
+    gusset03 = body['gusset03']
+    v_gusset03 ,f_gusset03 = createObject(gusset03)
 
+    ProjectName = body["ProjectName"]
+    Name_R = body["RouteName"]
+    Class_R = body["RoadClass"]
+    Milepost_B = body["Milepost_B"]
+    Milepost_E = body["Milepost_E"]
+    BP = body["BP"]
+    EP = body["EP"]
     # obj ファイルを ifc に変換
     # ifcファイルを生成
     # 階層1を作成
-    ifc = ifcProject(ProjectName, "橋梁")
+    ifc = ifcProject(ProjectName, '橋梁', Name_R, Class_R, Milepost_B, Milepost_E, BP, EP)
     # モデル空間を作成
     # 階層2を作成
     Container = ifc.create_place(Name="上部構造", ID="1", Class='上部構造', Info='', Type="単径間鋼橋鈑桁")
@@ -126,6 +139,25 @@ def createIfcGirder(body):
         Obj.add_Obj(vertices=v_cross_R[i], faces=f_cross_R[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rr, Info='', Type='')
         Obj.add_Obj(vertices=v_cross_T[i], faces=f_cross_T[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rt, Info='', Type='')
         Obj.add_Obj(vertices=v_cross_D[i], faces=f_cross_D[i], Container=crossBox, Name3=Name_r, ID=str(ID+1), Class=Name_rd, Info='', Type='')
+        ID += 1
+
+    Name_g = 'ガセットプレート（中間対傾構）'
+    ID = 0
+    for i in range(len(v_gusset01)):
+        Name_g1 = 'ガセットプレート01-{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_gusset01[i], faces=f_gusset01[i], Container=crossBox, Name3=Name_g1, ID=str(ID+1), Class=Name_g, Info='斜材接合用', Type='')
+        ID += 1
+
+    ID = 0
+    for i in range(len(v_gusset02)):
+        Name_g2 = 'ガセットプレート02-{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_gusset02[i], faces=f_gusset02[i], Container=crossBox, Name3=Name_g2, ID=str(ID+1), Class=Name_g, Info='下弦材接合用', Type='')
+        ID += 1
+
+    ID = 0
+    for i in range(len(v_gusset01)):
+        Name_g3 = 'ガセットプレート03-{:0=2}'.format(i+1)
+        Obj.add_Obj(vertices=v_gusset03[i], faces=f_gusset03[i], Container=crossBox, Name3=Name_g3, ID=str(ID+1), Class=Name_g, Info='上弦材接合用', Type='')
         ID += 1
 
     ifcFile = ifc.file
