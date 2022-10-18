@@ -110,6 +110,7 @@ class ifcProject:
         myProject = self.file.createIfcProject(create_guid())
         myProject.OwnerHistory = self.owner_hist
         myProject.Name = ProjectName
+        myProject.ObjectType = ProjectName
         myProject.RepresentationContexts = [self.context]
         myProject.UnitsInContext = UnitAssignment
 
@@ -118,7 +119,7 @@ class ifcProject:
         site_placement.RelativePlacement = create_ifcaxis2placement(self.file)
         mySite = self.file.createIfcSite( create_guid() )
         mySite.OwnerHistory = self.owner_hist
-        mySite.Name = "My Site"
+        mySite.ObjectType = "地理情報"
         mySite.ObjectPlacement = site_placement
         mySite.CompositionType="ELEMENT"
 
