@@ -79,23 +79,27 @@ def createIfcGirder(body):
     # 床版
     slab = body["slab"]
     # 階層3を作成
+    slabBox = Obj.CreateBox(Container=Container, Name=slab['Name'], ObjectType=slab['Name'], ID='3', Class=slab['Class'], Info=slab['Info'], Type=slab['Type'])
+    # 階層3にモデルを追加（階層4）
     ID = 1
     for j in range(len(slab['obj'])):
         v_model ,f_model = createObject(slab['obj'][j])
         for i in range(len(v_model)):
             Name_s = slab['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=Container, ObjectType=slab['Name'], Name3=Name_s, ID=str(ID), Class=Name_s, Info='', Type='')
+            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=slabBox, Name3=Name_s, ObjectType=slab['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
             ID += 1
 
     # 主桁
     beam = body["beam"]
     # 階層3を作成
+    beamBox = Obj.CreateBox(Container=Container, Name=beam['Name'], ObjectType=beam['Name'], ID='3', Class=beam['Class'], Info=beam['Info'], Type=beam['Type'])
+    # 階層3にモデルを追加（階層4）
     ID = 1
     for j in range(len(beam['obj'])):
         v_model ,f_model = createObject(beam['obj'][j])
         for i in range(len(v_model)):
             Name_s = beam['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=Container, ObjectType=beam['Name'], Name3=Name_s, ID=str(ID), Class=Name_s, Info='', Type='')
+            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=beamBox, Name3=Name_s, ObjectType=beam['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
             ID += 1
     # 横構
     cross = body["cross"]
