@@ -67,15 +67,26 @@ def createIfcGirder(body):
             ID += 1
 
     # 床版
+    #slab = body["slab"]
+    # 階層3を作成
+    #slabBox = Obj.CreateBox(Container=Container, Name=slab['Name'], ObjectType=slab['Name'], ID='1', Class=slab['Class'], Info=slab['Info'], Type=slab['Type'])
+    # 階層3にモデルを追加（階層4）
+    #for j in range(len(slab['obj'])):
+        #v_model ,f_model = createObject(slab['obj'][j])
+        #for i in range(len(v_model)):
+            #Name_s = slab['Name_s'][j] + '{:0=2}'.format(i+1)
+            #Obj.add_Obj2(vertices=v_model[i], faces=f_model[i], Container=slabBox, Name3=Name_s, ObjectType=slab['Name_s'][j], ID=str(i+1), Class=Name_s, Info='', Type='')
+    # 床版
     slab = body["slab"]
     # 階層3を作成
-    slabBox = Obj.CreateBox(Container=Container, Name=slab['Name'], ObjectType=slab['Name'], ID='1', Class=slab['Class'], Info=slab['Info'], Type=slab['Type'])
-    # 階層3にモデルを追加（階層4）
+    ID = 1
     for j in range(len(slab['obj'])):
         v_model ,f_model = createObject(slab['obj'][j])
         for i in range(len(v_model)):
             Name_s = slab['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj2(vertices=v_model[i], faces=f_model[i], Container=slabBox, Name3=Name_s, ObjectType=slab['Name_s'][j], ID=str(i+1), Class=Name_s, Info='', Type='')
+            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=Container, ObjectType=slab['Name'], Name3=Name_s, ID=str(ID), Class=Name_s, Info='', Type='')
+            ID += 1
+
     # 主桁
     beam = body["beam"]
     # 階層3を作成
