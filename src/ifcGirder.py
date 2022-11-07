@@ -55,88 +55,54 @@ def createIfcGirder(body):
     Obj = ifcObj(ifc)
 
     #フロントから受け取ったモデル情報をIFCに変換
-    # 舗装
-    pavement = body["pavement"]
-    # 階層3を作成
-    ID = 1
-    for j in range(len(pavement['obj'])):
-        v_model ,f_model = createObject(pavement['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = pavement['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj2(vertices=v_model[i], faces=f_model[i], Container=Container, ObjectType=pavement['Name'], Name3=Name_s, ID=str(ID), Class=Name_s, Info='', Type='')
-            ID += 1
+    ID = 1;
+    for key in ["pavement", "slab", "cross", "mid", "crossbeam"]:
+        value = body[key]
+        # 階層3を作成
+        Box = Obj.CreateBox(Container=Container, Name=value['Name'], ObjectType=value['Name'], ID=str(ID), Class=value['Name'], Info=value['Info'], Type=value['Type'], Standard=value['Standard'])
+        # 階層4を作成
+        ID2 = 1
+        N = 0
+        for j in range(len(value['obj'])):
+            v_model ,f_model = createObject(value['obj'][j])
+            for i in range(len(v_model)):
+                Name = value['Name_s']
+                if len(Name) == 0:
+                    Name = ""
+                else :
+                    Name = value['Name_s'][N]
+                Type = value['Type_s']
+                if len(Type) == 0:
+                    Type = ""
+                else :
+                    Type = value['Type_s'][j]
+                Info = value['Info_s']
+                if len(Info) == 0:
+                    Info = ""
+                else :
+                    Info = value['Info_s'][i]
+                Standard = value['Standard_s']
+                if len(Standard) == 0:
+                    Standard = ""
+                else :
+                    Standard = value['Standard_s'][j]
+                Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=Box, Name3=Name, ObjectType=Type, ID=str(ID2), Class=Name, Info=Info, Standard=Standard)
+                ID2 += 1
+                N += 1
+        ID += 1
 
-    # 床版
-    #slab = body["slab"]
-    # 階層3を作成
-    #slabBox = Obj.CreateBox(Container=Container, Name=slab['Name'], ObjectType=slab['Name'], ID='1', Class=slab['Class'], Info=slab['Info'], Type=slab['Type'])
-    # 階層3にモデルを追加（階層4）
-    #for j in range(len(slab['obj'])):
-        #v_model ,f_model = createObject(slab['obj'][j])
-        #for i in range(len(v_model)):
-            #Name_s = slab['Name_s'][j] + '{:0=2}'.format(i+1)
-            #Obj.add_Obj2(vertices=v_model[i], faces=f_model[i], Container=slabBox, Name3=Name_s, ObjectType=slab['Name_s'][j], ID=str(i+1), Class=Name_s, Info='', Type='')
-    # 床版
-    slab = body["slab"]
-    # 階層3を作成
-    slabBox = Obj.CreateBox(Container=Container, Name=slab['Name'], ObjectType=slab['Name'], ID='3', Class=slab['Class'], Info=slab['Info'], Type=slab['Type'])
-    # 階層3にモデルを追加（階層4）
-    ID = 1
-    for j in range(len(slab['obj'])):
-        v_model ,f_model = createObject(slab['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = slab['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=slabBox, Name3=Name_s, ObjectType=slab['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
-            ID += 1
+    beam = body['beam']
+    for i in range(len(beam['obj'])):
+        # 階層3を作成
+        beamBox = Obj.CreateBox(Container=Container, Name=beam['Name'], ObjectType=beam['Name'], ID=str(ID), Class=beam['Name'], Info=beam['Info'][i], Type='', Standard='')
+        # 階層4を作成
+        ID2 = 1
+        v_model ,f_model = createObject(beam['obj'][i])
+        for k in range(len(v_model)):
+            Obj.add_Obj(vertices=v_model[k], faces=f_model[k], Container=beamBox, Name3=beam['Name_s'][k], ObjectType=beam['Type_s'][k], ID=str(ID2), Class=beam['Name_s'][k], Info='', Standard='')
+            ID2 += 1
+        ID += 1
 
-    # 主桁
-    beam = body["beam"]
-    # 階層3を作成
-    beamBox = Obj.CreateBox(Container=Container, Name=beam['Name'], ObjectType=beam['Name'], ID='3', Class=beam['Class'], Info=beam['Info'], Type=beam['Type'])
-    # 階層3にモデルを追加（階層4）
-    ID = 1
-    for j in range(len(beam['obj'])):
-        v_model ,f_model = createObject(beam['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = beam['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=beamBox, Name3=Name_s, ObjectType=beam['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
-            ID += 1
-    # 横構
-    cross = body["cross"]
-    # 階層3を作成
-    crossBox = Obj.CreateBox(Container=Container, Name=cross['Name'], ObjectType=cross['Name'], ID='3', Class=cross['Class'], Info=cross['Info'], Type=cross['Type'])
-    # 階層3にモデルを追加（階層4）
-    ID = 1
-    for j in range(len(cross['obj'])):
-        v_model ,f_model = createObject(cross['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = cross['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=crossBox, Name3=Name_s, ObjectType=cross['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
-            ID += 1
-    # 対傾構
-    mid = body["mid"]
-    # 階層3を作成
-    midBox = Obj.CreateBox(Container=Container, Name=mid['Name'], ObjectType=mid['Name'], ID='4', Class=mid['Class'], Info=mid['Info'], Type=mid['Type'])
-    # 階層3にモデルを追加（階層4）
-    ID = 1
-    for j in range(len(mid['obj'])):
-        v_model ,f_model = createObject(mid['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = mid['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=midBox, Name3=Name_s, ObjectType=mid['Name_s'][j], ID=str(ID), Class=Name_s, Info='', Type='')
-            ID += 1
-    # 横桁
-    crossbeam = body["crossbeam"]
-    # 階層3を作成
-    crossbeamBox = Obj.CreateBox(Container=Container, Name=crossbeam['Name'], ObjectType=crossbeam['Name'], ID='3', Class=crossbeam['Class'], Info=crossbeam['Info'], Type=crossbeam['Type'])
-    # 階層3にモデルを追加（階層4）
-    ID = 1
-    for j in range(len(crossbeam['obj'])):
-        v_model ,f_model = createObject(crossbeam['obj'][j])
-        for i in range(len(v_model)):
-            Name_s = crossbeam['Name_s'][j] + '{:0=2}'.format(i+1)
-            Obj.add_Obj(vertices=v_model[i], faces=f_model[i], Container=crossbeamBox, Name3=Name_s, ObjectType=crossbeam['Name_s'][j], ID=str(i+1), Class=Name_s, Info='', Type='')
-            ID += 1
 
     ifcFile = ifc.file
     # ifc ファイルをテキストに変換する

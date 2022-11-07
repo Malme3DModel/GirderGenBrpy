@@ -8,7 +8,7 @@ class ifcObj():
     def __init__(self, ifcProject: ifcProject):
         self.ifc = ifcProject
 
-    def CreateObj(self, Container, Name3, ObjectType, vertices, faces, position, direction, ID, Class, Info, Type):
+    def CreateObj(self, Container, Name3, ObjectType, vertices, faces, position, direction, ID, Class, Info, Standard):
 
         B1 = self.ifc.file.create_entity(
             "IfcBuildingElementProxy",
@@ -71,13 +71,13 @@ class ifcObj():
             self.ifc.file.createIfcPropertySingleValue("ID", None, self.ifc.file.create_entity("IfcText", ID), None),
             self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", Class), None),
             self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", Info), None),
-            self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", Type), None),
+            self.ifc.file.createIfcPropertySingleValue("規格・仕様", None, self.ifc.file.create_entity("IfcText", Standard), None),
         ]
         property_set = self.ifc.file.createIfcPropertySet(B1.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
         self.ifc.file.createIfcRelDefinesByProperties(B1.GlobalId, self.ifc.owner_hist, None, None, [B1], property_set)
         return B1
 
-    def CreateBox(self, Container, Name, ObjectType, ID, Class, Info, Type):
+    def CreateBox(self, Container, Name, ObjectType, ID, Class, Info, Type, Standard):
         B0 = self.ifc.file.create_entity(
         "IfcBuildingElementProxy",
         GlobalId = create_guid(),
@@ -101,17 +101,18 @@ class ifcObj():
             self.ifc.file.createIfcPropertySingleValue("オブジェクト分類名", None, self.ifc.file.create_entity("IfcText", Class), None),
             self.ifc.file.createIfcPropertySingleValue("判別情報", None, self.ifc.file.create_entity("IfcText", Info), None),
             self.ifc.file.createIfcPropertySingleValue("種類・形式", None, self.ifc.file.create_entity("IfcText", Type), None),
+            self.ifc.file.createIfcPropertySingleValue("規格・仕様", None, self.ifc.file.create_entity("IfcText", Standard), None),
         ]
         property_set = self.ifc.file.createIfcPropertySet(B0.GlobalId, self.ifc.owner_hist, "基本情報", None, property_values)
         self.ifc.file.createIfcRelDefinesByProperties(B0.GlobalId, self.ifc.owner_hist, None, None, [B0], property_set)
         return B0
 
 
-    def add_Obj(self, vertices, faces, Container, Name3, ObjectType, ID, Class, Info, Type):
+    def add_Obj(self, vertices, faces, Container, Name3, ObjectType, ID, Class, Info,Standard):
 
         Obj = self.CreateObj(Container=Container, Name3=Name3, ObjectType=ObjectType,
                         vertices=vertices, faces=faces,
-                        position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0), ID=ID, Class=Class, Info=Info, Type=Type)
+                        position=(0.0,0.0,0.0), direction=(0.0,0.0,1.0), ID=ID, Class=Class, Info=Info, Standard=Standard)
         return Obj
 
 
