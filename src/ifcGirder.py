@@ -22,8 +22,19 @@ def createObject(obj):
                 continue
 
             if vals[0] == "v":
-                v = list(map(float, vals[1:4]))
-                v_list.append(v)
+                v = []
+                for j in range(1, 4):
+                    vvs = vals[j]
+                    try:
+                        vvf = float(vvs)
+                    except:
+                        if '…' in vvs:
+                            vvs = vvs.split('…')[0]
+                        vvf = float(vvs)
+
+                    v.append(vvf)
+                    # v = list(map(float, vals[1:4]))
+                    v_list.append(v)
 
             if vals[0] == "f":
                 fvID = []
@@ -55,8 +66,11 @@ def createIfcGirder(body):
     Obj = ifcObj(ifc)
 
     #フロントから受け取ったモデル情報をIFCに変換
-    ID = 1;
+    ID = 1
     for key in ["pavement", "slab", "cross", "mid", "crossbeam"]:
+        if not key in body:
+            continue
+
         value = body[key]
         # 階層3を作成
         Box = Obj.CreateBox(Container=Container, Name=value['Name'], ObjectType=value['Name'], ID=str(ID), Class=value['Name'], Info=value['Info'], Type=value['Type'], Standard=value['Standard'])
@@ -91,17 +105,20 @@ def createIfcGirder(body):
                 N += 1
         ID += 1
 
-    beam = body['beam']
-    for i in range(len(beam['obj'])):
-        # 階層3を作成
-        beamBox = Obj.CreateBox(Container=Container, Name=beam['Name'], ObjectType=beam['Name'], ID=str(ID), Class=beam['Name'], Info=beam['Info'][i], Type='', Standard='')
-        # 階層4を作成
-        ID2 = 1
-        v_model ,f_model = createObject(beam['obj'][i])
-        for k in range(len(v_model)):
-            Obj.add_Obj(vertices=v_model[k], faces=f_model[k], Container=beamBox, Name3=beam['Name_s'][k], ObjectType=beam['Type_s'][k], ID=str(ID2), Class=beam['Name_s'][k], Info='', Standard='')
-            ID2 += 1
-        ID += 1
+    if 'beam' in body:
+        beam = body['beam']
+        for i in range(len(beam['obj'])):
+            # 階層3を作成
+            beamBox = Obj.CreateBox(Container=Container, Name=beam['Name'], ObjectType=beam['Name'], ID=str(ID), Class=beam['Name'], Info=beam['Info'][i], Type='', Standard='')
+            # 階層4を作成
+            ID2 = 1
+            v_model ,f_model = createObject(beam['obj'][i])
+            for k in range(len(v_model)):
+                Obj.add_Obj(vertices=v_model[k], faces=f_model[k], Container=beamBox, Name3=beam['Name_s'][k], ObjectType=beam['Type_s'][k], ID=str(ID2), Class=beam['Name_s'][k], Info='', Standard='')
+                ID2 += 1
+            ID += 1
+    else:
+        pass
 
 
     ifcFile = ifc.file

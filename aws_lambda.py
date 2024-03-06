@@ -1,4 +1,4 @@
-import json
+import json as json2
 
 # from tests.test_ifcGirder import test_Ifc
 from src.ifcGirder import createIfcGirder
@@ -19,10 +19,7 @@ def lambda_handler(event, context):
         body = event['body']
         ifcGirder = createIfcGirder(body)
 
-        return (json.dumps({ 'body': ifcGirder}), 200, headers)
+        return (json2.dumps({ 'body': ifcGirder}), 200, headers)
 
     except:
-        import traceback
-        traceback.print_exc()
-        return (json.dumps({ 'body': traceback.print_exc()}), 500, headers)
-
+        return (json2.dumps({'body': 'err'}), 500, headers)

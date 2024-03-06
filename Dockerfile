@@ -4,6 +4,9 @@ RUN yum update -y
 RUN yum install wget -y
 # pyvista の実行に失敗する
 RUN yum install mesa-libGL-devel -y
+# vscode でdockerをアタッチするのに失敗する
+RUN yum install -y tar
+
 RUN yum clean all
 
 # RUN yum update && yum install -y wget && yum clean all
