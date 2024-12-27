@@ -1,4 +1,5 @@
 import ifcopenshell
+from ifcopenshell import guid
 import uuid
 
 O = 0., 0., 0.
@@ -7,7 +8,7 @@ Y = 0., 1., 0.
 Z = 0., 0., 1.
 
 def create_guid():
-    return ifcopenshell.guid.compress(uuid.uuid1().hex)
+    return guid.compress(uuid.uuid1().hex)
 
 
 # Creates an IfcAxis2Placement3D from Location, Axis and RefDirection specified as Python tuples
