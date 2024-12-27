@@ -1,5 +1,5 @@
 import ifcopenshell
-
+from ifcopenshell import guid
 from src.comon.comon import *
 from src.comon.ifcProject import ifcProject
 
@@ -12,7 +12,7 @@ class ifcObj():
 
         B1 = self.ifc.file.create_entity(
             "IfcBuildingElementProxy",
-            GlobalId = ifcopenshell.guid.new(),
+            GlobalId = guid.new(),
             Name = Name3,
             ObjectType = ObjectType
         )
@@ -120,7 +120,7 @@ class ifcObj():
 
         B1 = self.ifc.file.create_entity(
             "IfcBuildingElementProxy",
-            GlobalId = ifcopenshell.guid.new(),
+            GlobalId = guid.new(),
             Name = Name3,
             ObjectType = ObjectType
         )

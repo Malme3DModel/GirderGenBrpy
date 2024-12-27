@@ -1,4 +1,3 @@
-import ifcopenshell
 from ifcopenshell import guid
 import uuid
 
